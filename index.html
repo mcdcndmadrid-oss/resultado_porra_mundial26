@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porra Mundial 2026 · LCS · Clasificación</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;--bg2:#0e1018;--bg3:#161822;--bg4:#1e2030;
+  --border:#262840;--border2:#353760;
+  --text:#e2e4f0;--muted:#6b6e8a;
+  --gold:#f5c518;--red:#e63030;--green:#2ecc71;--blue:#4f8ef7;--cyan:#00d4ff;
+  --mono:'DM Mono',monospace;--disp:'Bebas Neue',sans-serif;--body:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;min-height:100vh;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#07080d 0%,#0d1520 50%,#07080d 100%);border-bottom:2px solid var(--gold);padding:40px 24px 32px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,197,24,.06) 0%,transparent 65%);pointer-events:none;}
+.hero h1{font-family:var(--disp);font-size:clamp(3rem,8vw,5.5rem);letter-spacing:4px;color:#fff;line-height:1;text-shadow:0 0 40px rgba(245,197,24,.25);}
+.hero h1 span{color:var(--gold);}
+.hero-sub{font-family:var(--mono);font-size:.8rem;letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.hero-badges{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.hbadge{font-family:var(--mono);font-size:.68rem;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:2px;}
+.hb-gold{background:var(--gold);color:var(--bg);}
+.hb-dark{background:var(--bg4);color:var(--muted);border:1px solid var(--border);}
+.hb-live{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3);}
+.updated-badge{font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-top:10px;}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:2px solid var(--border);overflow-x:auto;background:var(--bg2);position:sticky;top:0;z-index:100;}
+.tab{background:none;border:none;font-family:var(--mono);font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:13px 22px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* ── MAIN ── */
+.main{max-width:1500px;margin:0 auto;padding:24px 20px 60px;transition:max-width .25s,padding .25s;}
+
+/* ── MODO TABLA EXTENDIDA ── */
+body.ext-mode .main{
+  max-width:none;
+  width:100%;
+  padding:18px 18px 48px;
+}
+body.ext-mode .stat-row{
+  display:none;
+}
+body.ext-mode .podium{
+  display:none;
+}
+body.ext-mode .lb-toolbar{
+  position:sticky;
+  top:47px;
+  z-index:20;
+  background:linear-gradient(180deg,var(--bg) 60%,rgba(7,8,13,.85));
+  padding:10px 0 12px;
+  backdrop-filter:blur(8px);
+  margin-bottom:8px;
+}
+body.ext-mode .ext-table{
+  font-size:.8rem;
+}
+body.ext-mode .ext-table th{
+  font-size:.62rem;
+  padding:7px 8px;
+}
+body.ext-mode .ext-table td{
+  padding:6px 8px;
+}
+body.ext-mode .ext-wrap{
+  max-height:calc(100vh - 140px);
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius:4px;
+}
+body.ext-mode .ext-table th.name-hdr,
+body.ext-mode .ext-table th.tot-hdr{
+  font-size:.65rem;
+}
+/* Stick all 3 header rows when in ext-mode */
+body.ext-mode .ext-table thead tr:nth-child(1) th{ position:sticky; top:0; z-index:4; }
+body.ext-mode .ext-table thead tr:nth-child(2) th{ position:sticky; top:29px; z-index:4; }
+body.ext-mode .ext-table thead tr:nth-child(3) th{ position:sticky; top:55px; z-index:4; }
+body.ext-mode .ext-table thead tr:nth-child(1) th.name-hdr,
+body.ext-mode .ext-table thead tr:nth-child(1) th.tot-hdr{ z-index:6; }
+body.ext-mode .ext-table td.name-cell{ z-index:2; }
+
+/* ── PODIUM ── */
+.podium{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:28px;}
+.podium-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px 24px;text-align:center;min-width:130px;}
+.podium-card.first{border-color:var(--gold);background:linear-gradient(180deg,rgba(245,197,24,.08),var(--bg2));}
+.podium-medal{font-size:2.2rem;margin-bottom:6px;}
+.podium-pos{font-family:var(--mono);font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.podium-team{font-family:var(--disp);font-size:1.1rem;letter-spacing:1px;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;}
+.podium-card.first .podium-team{color:var(--gold);}
+
+/* ── STAT ROW ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:22px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:12px 14px;}
+.stat-v{font-family:var(--disp);font-size:1.9rem;color:var(--gold);line-height:1;}
+.stat-l{font-family:var(--mono);font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+/* ── LEADERBOARD ── */
+.lb-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+.lb-search{background:var(--bg4);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.78rem;padding:7px 12px;border-radius:3px;width:200px;}
+.lb-search:focus{outline:none;border-color:var(--blue);}
+.toggle-wrap{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.toggle-label{font-family:var(--mono);font-size:.72rem;color:var(--muted);transition:color .2s;}
+body.ext-mode .toggle-label{color:var(--cyan);}
+.toggle{position:relative;width:42px;height:22px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:var(--bg4);border:1px solid var(--border);border-radius:11px;transition:.2s;}
+.toggle input:checked + .toggle-track{background:rgba(79,142,247,.3);border-color:var(--blue);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--muted);border-radius:50%;transition:.2s;}
+.toggle input:checked ~ .toggle-thumb{left:23px;background:var(--blue);}
+body.ext-mode .toggle input:checked + .toggle-track{background:rgba(0,212,255,.2);border-color:var(--cyan);}
+body.ext-mode .toggle input:checked ~ .toggle-thumb{background:var(--cyan);}
+
+/* compact table */
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table thead tr{background:var(--bg4);}
+.lb-table th{font-family:var(--mono);font-size:.63rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:9px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+.lb-table td{padding:0;border-bottom:1px solid rgba(38,40,64,.45);}
+.lb-table tbody tr{transition:background .1s;cursor:pointer;}
+.lb-table tbody tr:hover{background:rgba(255,255,255,.02);}
+.lb-table tbody tr.exp-open{background:rgba(79,142,247,.04);}
+.lbc{padding:10px 10px;}
+.rnum{font-family:var(--disp);font-size:1.25rem;line-height:1;}
+.r1{color:var(--gold)}.r2{color:#c0c0c0}.r3{color:#cd7f32}.rx{color:var(--muted)}
+.lb-name{font-weight:700;font-size:.9rem;}
+.lb-pts-big{font-family:var(--disp);font-size:1.5rem;color:var(--gold);line-height:1;text-align:right;}
+.lb-pts-sub{font-family:var(--mono);font-size:.58rem;color:var(--muted);text-align:right;}
+.cat-pts{font-family:var(--mono);font-size:.8rem;font-weight:500;}
+.pbar{height:3px;background:var(--bg4);border-radius:3px;margin-top:4px;overflow:hidden;}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:3px;}
+
+/* expand row */
+.exp-tr{display:none;}
+.exp-tr.open{display:table-row;}
+.exp-td{background:rgba(79,142,247,.03);border-bottom:1px solid var(--border) !important;padding:12px 10px;}
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;}
+.exp-sec{font-family:var(--mono);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.pts-row{display:flex;justify-content:space-between;padding:3px 0;font-family:var(--mono);font-size:.74rem;border-bottom:1px solid rgba(38,40,64,.3);}
+.pts-row:last-child{border-bottom:none;}
+.pts-label{color:var(--text);}
+.pts-val{font-weight:500;}
+.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-zero{color:var(--muted)}.c-cyan{color:var(--cyan)}
+
+/* extended table */
+.ext-wrap{overflow-x:auto;width:100%;}
+.ext-table{border-collapse:collapse;white-space:nowrap;font-size:.71rem;width:100%;}
+.ext-table th{font-family:var(--mono);font-size:.57rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:6px 7px;text-align:center;border:1px solid var(--border);background:var(--bg4);}
+.ext-table th.name-hdr{text-align:left;min-width:140px;position:sticky;left:0;z-index:3;background:var(--bg4);}
+.ext-table th.tot-hdr{background:rgba(230,48,48,.1);color:var(--red);}
+.ext-table td{padding:5px 7px;text-align:center;border:1px solid rgba(38,40,64,.4);}
+.ext-table td.name-cell{text-align:left;font-weight:600;position:sticky;left:0;background:var(--bg3);z-index:1;border-right:2px solid var(--border);}
+.ext-table td.tot-cell{font-family:var(--disp);font-size:1.1rem;color:var(--gold);background:rgba(245,197,24,.06);}
+.ext-table tbody tr:hover td{background:rgba(255,255,255,.02);}
+.ext-table tbody tr:hover td.name-cell{background:#1e2032;}
+.ep{font-family:var(--mono);font-weight:500;}
+.e-gold{color:var(--gold);background:rgba(245,197,24,.1);}
+.e-grn{color:var(--green);background:rgba(46,204,113,.07);}
+.e-cyan{color:var(--cyan);background:rgba(0,212,255,.07);}
+.e-zero{color:var(--border2);}
+/* kind-specific hit colours */
+.ext-r16   {color:#00d4ff;background:rgba(0,212,255,.18);font-weight:700;}
+.ext-oct   {color:#4f8ef7;background:rgba(79,142,247,.18);font-weight:700;}
+.ext-qf    {color:#f5c518;background:rgba(245,197,24,.18);font-weight:700;}
+.ext-sf    {color:#f58218;background:rgba(245,130,24,.2);font-weight:700;}
+.ext-finalist{color:#e63030;background:rgba(230,48,48,.18);font-weight:700;}
+.ext-third {color:#64b464;background:rgba(100,180,100,.18);font-weight:700;}
+.ext-champion{color:#e63030;background:rgba(230,48,48,.22);font-weight:700;}
+.ext-award {color:#2ecc71;background:rgba(46,204,113,.18);font-weight:700;}
+.ext-exact {color:var(--gold)!important;background:rgba(245,197,24,.14)!important;}
+.ext-res   {color:var(--green)!important;background:rgba(46,204,113,.09)!important;}
+.ext-zero  {color:var(--border2);}
+
+.team-with-flag{display:inline-flex;align-items:center;gap:5px;}
+.team-with-flag.reverse{flex-direction:row-reverse;}
+.match-venue{font-family:var(--mono);font-size:.58rem;color:#4a8aaf;margin-top:2px;}
+
+/* ── RESULTS SECTION ── */
+.results-phase{margin-bottom:28px;}
+.phase-title{font-family:var(--disp);font-size:1.4rem;letter-spacing:3px;color:var(--red);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+.match-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:11px 14px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;}
+.match-card.played{border-color:rgba(46,204,113,.25);}
+.mt{font-family:var(--mono);font-size:.82rem;font-weight:500;display:flex;align-items:center;}
+.mt.h{justify-content:flex-end;}
+.mt.winner .team-with-flag span,.mt.winner{color:var(--gold);}
+.mt.pending,.mt.pending span{color:var(--muted);font-style:italic;}
+.score-display{font-family:var(--disp);font-size:1.4rem;color:var(--text);text-align:center;white-space:nowrap;letter-spacing:2px;}
+.score-display.played{color:var(--cyan);}
+.score-display.tbd{color:var(--muted);font-size:.8rem;font-family:var(--mono);}
+.match-date{font-family:var(--mono);font-size:.6rem;color:var(--muted);}
+
+/* ── GROUPS TABLE ── */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;}
+.grp-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.grp-hdr{background:var(--bg4);padding:8px 14px;font-family:var(--disp);font-size:1.1rem;letter-spacing:2px;color:var(--gold);border-bottom:1px solid var(--border);}
+.grp-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.grp-table th{font-family:var(--mono);font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:6px 8px;text-align:center;border-bottom:1px solid var(--border);}
+.grp-table th:first-child{text-align:left;padding-left:12px;}
+.grp-table td{padding:7px 8px;text-align:center;border-bottom:1px solid rgba(38,40,64,.35);}
+.grp-table td:first-child{text-align:left;padding-left:10px;}
+.grp-table tr:last-child td{border-bottom:none;}
+.grp-table tbody tr:hover{background:rgba(255,255,255,.02);}
+.pb{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:3px;font-weight:700;font-size:.72rem;margin-right:4px;}
+.pb1{background:var(--gold);color:var(--bg)}.pb2{background:#aaa;color:var(--bg)}.pb3{background:#cd7f32;color:var(--bg)}.pbx{background:var(--bg4);color:var(--muted)}
+.pts-cell{font-weight:700;color:var(--gold);}
+.q1 td:first-child{border-left:3px solid var(--gold);}
+.q2 td:first-child{border-left:3px solid #aaa;}
+
+/* ── KO CARD ── */
+.ko-match-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.ko-card-hdr{background:var(--bg4);padding:5px 12px;display:flex;justify-content:space-between;}
+.ko-card-lbl{font-family:var(--mono);font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.ko-card-date{font-family:var(--mono);font-size:.62rem;color:var(--blue);}
+.ko-card-body{padding:10px 13px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;}
+.kt{font-family:var(--mono);font-size:.85rem;font-weight:500;display:flex;align-items:center;}
+.kt.h{justify-content:flex-end;}
+.kt.winner .team-with-flag span,.kt.winner{color:var(--gold);}
+.kt.pending,.kt.pending span{color:var(--muted);font-style:italic;font-size:.75rem;}
+.ko-score{font-family:var(--disp);font-size:1.2rem;color:var(--cyan);text-align:center;letter-spacing:2px;}
+.ko-score.tbd{font-family:var(--mono);font-size:.75rem;color:var(--muted);}
+
+/* ── ERROR / LOADING ── */
+.loading{text-align:center;padding:80px 20px;color:var(--muted);}
+.loading-spin{font-size:2.5rem;margin-bottom:14px;animation:spin 1s linear infinite;display:inline-block;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.error-box{background:rgba(230,48,48,.1);border:1px solid rgba(230,48,48,.3);border-radius:6px;padding:20px 24px;margin:20px 0;font-family:var(--mono);font-size:.82rem;color:#ff8080;line-height:1.7;}
+
+/* ── SCROLLBARS ── */
+/* Page-level: thin & dark */
+html{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+html::-webkit-scrollbar{width:6px;height:6px;}
+html::-webkit-scrollbar-track{background:transparent;}
+html::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+html::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+/* ext-wrap: same thin style */
+.ext-wrap{scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.ext-wrap::-webkit-scrollbar{width:5px;height:5px;}
+.ext-wrap::-webkit-scrollbar-track{background:transparent;}
+.ext-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.ext-wrap::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+.ext-wrap::-webkit-scrollbar-corner{background:transparent;}
+
+@media(max-width:768px){
+  .main{padding:16px 12px 40px;}
+  .match-grid,.groups-grid,.ko-grid,.ext-wrap{overflow-x:auto;}
+  .podium{gap:12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>MUNDIAL <span>2026</span></h1>
+  <div class="hero-sub">USA · CANADA · MEXICO · 11 JUN – 19 JUL</div>
+  <div class="hero-badges">
+    <span class="hbadge hb-gold">⚽ Porra Oficial</span>
+    <span class="hbadge hb-live" id="live-badge">● En juego</span>
+    <span class="hbadge hb-dark" id="players-badge">— participantes</span>
+  </div>
+  <div class="updated-badge" id="updated-badge">Cargando datos...</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('clasificacion')">🏆 Clasificación</button>
+  <button class="tab" onclick="switchTab('resultados')">⚽ Resultados</button>
+  <button class="tab" onclick="switchTab('grupos')">📊 Grupos</button>
+  <button class="tab" onclick="switchTab('eliminatorias')">⚔ Eliminatorias</button>
+</div>
+
+<div class="main">
+  <div id="tab-clasificacion" class="tab-pane active"></div>
+  <div id="tab-resultados" class="tab-pane"></div>
+  <div id="tab-grupos" class="tab-pane"></div>
+  <div id="tab-eliminatorias" class="tab-pane"></div>
+</div>
+
+<script>
+'use strict';
+
+let DATA = null;
+let lbFilter = '', lbSort = 'pts';
+const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+
+// ══════════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════════
+function loadData(){
+  // Data is embedded directly in this file as window.PORRA_DATA
+  if(typeof window.PORRA_DATA !== 'undefined'){
+    DATA = window.PORRA_DATA;
+    onDataLoaded();
+  } else {
+    showError(new Error('No hay datos todavía. Genera el index.html desde el panel de control.'));
+  }
+}
+
+function showError(e){
+  document.getElementById('tab-clasificacion').innerHTML = `
+    <div class="error-box">
+      <b>No hay datos disponibles todavía</b><br><br>
+      ${e.message}<br><br>
+      Este fichero index.html se genera y publica desde el panel de control.<br>
+      Si estás probando en local, abre el fichero desde un servidor web (no directamente como file://).<br>
+      En VS Code: instala "Live Server" y ábrelo desde ahí.
+    </div>`;
+  document.getElementById('updated-badge').textContent = 'Error al cargar datos';
+}
+
+function onDataLoaded(){
+  // Update header
+  const d = new Date(DATA.meta.generated);
+  document.getElementById('updated-badge').textContent =
+    `Actualizado: ${d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})} a las ${d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('players-badge').textContent = `${DATA.meta.totalPlayers} participantes`;
+
+  // Check if tournament has started
+  const hasResults = Object.keys(DATA.groupResults).length > 0;
+  document.getElementById('live-badge').textContent = hasResults ? '● En juego' : '⏳ Pendiente de inicio';
+
+  renderPodium();
+  renderClassificacion();
+  renderResultados();
+  renderGrupos();
+  renderEliminatorias();
+}
+
+// ══════════════════════════════════════════════
+// PODIUM
+// ══════════════════════════════════════════════
+function renderPodium(){
+  const p = DATA.podium;
+  if(!p.champion) return; // No final yet
+  const medals = ['🥇','🥈','🥉','4️⃣'];
+  const teams = [p.champion, p.runnerUp, p.third, p.fourth];
+  const labels = ['Campeón del Mundo','Subcampeón','3er Puesto','4º Puesto'];
+  // Insert before tab-clasificacion content
+}
+
+// ══════════════════════════════════════════════
+// CLASIFICACIÓN TAB
+// ══════════════════════════════════════════════
+function renderClassificacion(){
+  const el = document.getElementById('tab-clasificacion');
+  const lb = DATA.leaderboard;
+
+  // Podium if final played
+  let podiumHTML = '';
+  if(DATA.podium.champion){
+    const teams=[DATA.podium.champion,DATA.podium.runnerUp,DATA.podium.third,DATA.podium.fourth];
+    const medals=['🥇','🥈','🥉','4️⃣'];
+    const labels=['Campeón','Subcampeón','3er Puesto','4º Puesto'];
+    podiumHTML=`<div class="podium" style="margin-bottom:24px">
+      ${teams.map((t,i)=>t?`<div class="podium-card ${i===0?'first':''}">
+        <div class="podium-medal">${medals[i]}</div>
+        <div class="podium-pos">${labels[i]}</div>
+        <div class="podium-team">${teamHTML(t,false,false)}</div>
+      </div>`:'').join('')}
+    </div>`;
+  }
+
+  // Stats
+  const maxPts = lb[0]?.score.total || 0;
+  const playedGM = Object.keys(DATA.groupResults).length;
+  const playedKO = Object.keys(DATA.koResults).length;
+  const statsHTML = `<div class="stat-row">
+    <div class="stat-card"><div class="stat-v">${lb.length}</div><div class="stat-l">Participantes</div></div>
+    <div class="stat-card"><div class="stat-v">${playedGM}/72</div><div class="stat-l">Partidos grupos</div></div>
+    <div class="stat-card"><div class="stat-v">${playedKO}/32</div><div class="stat-l">Eliminatorias</div></div>
+    <div class="stat-card"><div class="stat-v">${lb[0]?.name.split(' ')[0]||'—'}</div><div class="stat-l">Líder</div></div>
+    <div class="stat-card"><div class="stat-v">${maxPts}</div><div class="stat-l">Máx. puntos</div></div>
+  </div>`;
+
+  el.innerHTML = podiumHTML + statsHTML + `
+    <div class="lb-toolbar">
+      <input class="lb-search" type="text" placeholder="Buscar participante..." oninput="lbFilter=this.value;renderLBTable()">
+      <select style="background:var(--bg4);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.72rem;padding:6px 8px;border-radius:3px;cursor:pointer" onchange="lbSort=this.value;renderLBTable()">
+        <option value="pts">Por puntos totales</option>
+        <option value="grupos">Por grupos</option>
+        <option value="name">Por nombre</option>
+      </select>
+      <div class="toggle-wrap">
+        <span class="toggle-label" id="extToggleLabel">Vista extendida</span>
+        <label class="toggle">
+          <input type="checkbox" id="extToggle" onchange="renderLBTable()">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <button id="extCsvBtn" style="display:none;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);color:var(--cyan);font-family:var(--mono);font-size:.72rem;padding:6px 12px;border-radius:3px;cursor:pointer;letter-spacing:1px" onclick="downloadPublicExtendedCSV()" title="Descargar tabla extendida como CSV">⬇ CSV</button>
+    </div>
+    <div id="lb-table-wrap"></div>`;
+
+  renderLBTable();
+}
+
+function renderLBTable(){
+  const wrap = document.getElementById('lb-table-wrap');
+  if(!wrap || !DATA) return;
+  const ext = document.getElementById('extToggle')?.checked;
+  const csvBtn = document.getElementById('extCsvBtn');
+  if(csvBtn) csvBtn.style.display = ext ? 'inline-block' : 'none';
+  const lbl = document.getElementById('extToggleLabel');
+  if(lbl) lbl.textContent = ext ? 'Vista compacta' : 'Vista extendida';
+  const wasExt = document.body.classList.contains('ext-mode');
+  document.body.classList.toggle('ext-mode', !!ext);
+  if(ext && !wasExt) window.scrollTo({top:0, behavior:'smooth'});
+  let data = [...DATA.leaderboard];
+  if(lbFilter) data = data.filter(p => p.name.toLowerCase().includes(lbFilter.toLowerCase()));
+  if(lbSort === 'grupos') data.sort((a,b) => b.score.grupos - a.score.grupos);
+  else if(lbSort === 'name') data.sort((a,b) => a.name.localeCompare(b.name));
+  else data.sort((a,b) => b.score.total - a.score.total);
+
+  if(ext){ wrap.innerHTML = renderExtTable(data); return; }
+
+  const maxPts = DATA.leaderboard[0]?.score.total || 1;
+  let html = `<table class="lb-table"><thead><tr>
+    <th style="width:44px">Pos</th>
+    <th>Participante</th>
+    <th>Grupos</th><th>16avos</th><th>Oct/Ctos/SF</th><th>Final/Camp.</th><th>Premios</th>
+    <th style="text-align:right">Total</th>
+  </tr></thead><tbody>`;
+
+  data.forEach(p => {
+    const rank = DATA.leaderboard.findIndex(x => x.name === p.name) + 1;
+    const sc = p.score;
+    const rc = rank===1?'r1':rank===2?'r2':rank===3?'r3':'rx';
+    const pct = maxPts > 0 ? Math.round(sc.total/maxPts*100) : 0;
+    const koT = sc.r16 + sc.oct + sc.qf + sc.sf;
+    const finT = sc.final + sc.tercero + sc.campeon;
+    const uid = p.name.replace(/[^a-zA-Z0-9]/g,'_') + '_' + rank;
+    html += `
+      <tr onclick="toggleExpRow('${uid}')">
+        <td class="lbc"><span class="rnum ${rc}">${rank}</span></td>
+        <td class="lbc">
+          <div class="lb-name">${esc(p.name)}</div>
+          <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+        </td>
+        <td class="lbc"><span class="cat-pts" style="color:${sc.grupos>0?'var(--blue)':'var(--muted)'}">${sc.grupos}</span></td>
+        <td class="lbc"><span class="cat-pts" style="color:var(--cyan)">${sc.r16}</span></td>
+        <td class="lbc"><span class="cat-pts" style="color:#f5a018">${koT}</span></td>
+        <td class="lbc"><span class="cat-pts" style="color:var(--red)">${finT}</span></td>
+        <td class="lbc"><span class="cat-pts" style="color:var(--green)">${sc.awards}</span></td>
+        <td class="lbc"><div class="lb-pts-big">${sc.total}</div><div class="lb-pts-sub">pts</div></td>
+      </tr>
+      <tr class="exp-tr" id="exp_${uid}">
+        <td class="exp-td" colspan="8">${renderPlayerBreakdown(p)}</td>
+      </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderDetailBlock(title, items){
+  const positive=(items||[]).filter(x=>(x.pts||0)>0);
+  if(!positive.length) return '';
+  return `<div>
+    <div class="exp-sec">${esc(title)}</div>
+    ${positive.map(x=>`
+      <div class="pts-row">
+        <span class="pts-label" style="font-size:.72rem">${esc(x.label||x.team||x.key)}</span>
+        <span class="pts-val c-cyan">+${x.pts}</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderPlayerBreakdown(p){
+  const sc = p.score;
+  const det = sc.det || {};
+  const cats = [
+    {label:'Grupos', pts:sc.grupos, color:'var(--blue)'},
+    {label:'16avos de Final', pts:sc.r16, color:'var(--cyan)'},
+    {label:'Octavos', pts:sc.oct, color:'#f5c518'},
+    {label:'Cuartos', pts:sc.qf, color:'#f5a018'},
+    {label:'Semifinales', pts:sc.sf, color:'#f56418'},
+    {label:'Clasificado Final', pts:sc.final, color:'var(--red)'},
+    {label:'3er Puesto', pts:sc.tercero, color:'var(--muted)'},
+    {label:'Campeón', pts:sc.campeon, color:'var(--gold)'},
+    {label:'Premios individuales', pts:sc.awards, color:'var(--green)'},
+  ];
+  let html = '<div class="exp-grid">';
+  html += `<div>
+    <div class="exp-sec">Puntos por categoría</div>
+    ${cats.filter(c=>c.pts>0).map(c=>`
+      <div class="pts-row">
+        <span class="pts-label">${c.label}</span>
+        <span class="pts-val" style="color:${c.color}">+${c.pts}</span>
+      </div>`).join('')}
+    <div class="pts-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px">
+      <span class="pts-label" style="font-weight:700">TOTAL</span>
+      <span class="pts-val c-gold" style="font-size:1rem;font-family:var(--disp)">${sc.total}</span>
+    </div>
+  </div>`;
+
+  // Group aciertos from det.groups
+  const gmHits=(det.groups||[]).filter(d=>d.pts>0);
+  if(gmHits.length){
+    html+=`<div>
+      <div class="exp-sec">Aciertos en grupos (${gmHits.length})</div>
+      ${gmHits.map(d=>`
+        <div class="pts-row">
+          <span class="pts-label" style="font-size:.7rem">${esc(d.label||d.real)}</span>
+          <span class="pts-val ${d.pts>=7?'c-gold':'c-green'}">+${d.pts}</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  html += renderDetailBlock('16avos de Final', det.r16);
+  html += renderDetailBlock('Octavos', det.oct);
+  html += renderDetailBlock('Cuartos', det.qf);
+  html += renderDetailBlock('Semifinales', det.sf);
+  html += renderDetailBlock('Finalistas', det.final);
+  html += renderDetailBlock('3er Puesto', det.tercero);
+  html += renderDetailBlock('Campeón', det.campeon);
+  html += renderDetailBlock('Premios', det.awards);
+
+  html += '</div>';
+  return html;
+}
+
+function toggleExpRow(uid){
+  const row = document.getElementById('exp_' + uid);
+  if(!row) return;
+  const open = row.classList.contains('open');
+  document.querySelectorAll('.exp-tr.open').forEach(r=>r.classList.remove('open'));
+  if(!open) row.classList.add('open');
+}
+
+// Fallback tooltip for an extended-table cell: ensures KO/award cells always show a title.
+function extCellTitle(cell, col){
+  if(cell && cell.title) return cell.title;
+  const koKinds = ['r16','oct','qf','sf','finalist','third','champion','award_bota','award_mvp'];
+  if(koKinds.includes(col?.kind)){
+    const real = col.team || col.label || '—';
+    return `Apuesta: — | Real: ${real} | Sin puntos`;
+  }
+  return '';
+}
+
+// Extended table
+function renderExtTable(data){
+  const extData = DATA.extendedTable;
+  if(!extData || !extData.columns || !extData.columns.length){
+    return `<div style="text-align:center;padding:30px;color:var(--muted);font-family:var(--mono);font-size:.82rem">No hay datos de tabla extendida todavía.</div>`;
+  }
+  const cols = extData.columns;
+
+  // Build top-header blocks (consecutive same label → merged)
+  const ERL = {r16:'16avos',oct:'Octavos',qf:'Cuartos',sf:'Semis',finalist:'Finalistas',
+                third:'3er P.',champion:'Campeón',award_bota:'Premios',award_mvp:'Premios'};
+  const topBlocks = [];
+  cols.forEach(c=>{
+    const label = c.kind==='group' ? `GRP ${c.group}` : (ERL[c.kind]||c.kind);
+    const last = topBlocks[topBlocks.length-1];
+    if(last && last.label===label){ last.span++; }
+    else { topBlocks.push({label, span:1, kind:c.kind}); }
+  });
+
+  // Helper: colour class for a hit cell
+  const hitClass = k => k==='group'?'':
+    k==='r16'?'ext-r16': k==='oct'?'ext-oct': k==='qf'?'ext-qf': k==='sf'?'ext-sf':
+    k==='finalist'?'ext-finalist': k==='third'?'ext-third': k==='champion'?'ext-champion':
+    (k==='award_bota'||k==='award_mvp')?'ext-award':'';
+
+  // Top header row (block labels)
+  const topRow = topBlocks.map(b=>{
+    if(b.kind==='group')
+      return `<th colspan="${b.span}" style="background:rgba(79,142,247,.08);color:var(--blue);border-color:rgba(79,142,247,.2);text-align:center">${esc(b.label)}</th>`;
+    const colorMap={r16:'rgba(0,212,255,.1)',oct:'rgba(79,142,247,.1)',qf:'rgba(245,197,24,.09)',
+                    sf:'rgba(245,130,24,.1)',finalist:'rgba(230,48,48,.09)',third:'rgba(100,180,100,.09)',
+                    champion:'rgba(230,48,48,.12)',award_bota:'rgba(46,204,113,.09)',award_mvp:'rgba(46,204,113,.09)'};
+    const textMap={r16:'#00d4ff',oct:'#4f8ef7',qf:'#f5c518',sf:'#f58218',finalist:'#e63030',
+                   third:'#64b464',champion:'#e63030',award_bota:'#2ecc71',award_mvp:'#2ecc71'};
+    const bg=colorMap[b.kind]||'transparent', cl=textMap[b.kind]||'var(--muted)';
+    return `<th colspan="${b.span}" style="background:${bg};color:${cl};text-align:center">${esc(b.label)}</th>`;
+  }).join('');
+
+  // Column label row
+  const colRow = cols.map(c=>{
+    if(c.kind==='group'){
+      return `<th style="background:rgba(79,142,247,.06);color:${c.label.includes('–')?'var(--cyan)':'var(--muted)'};border-color:rgba(79,142,247,.18);font-size:.56rem;white-space:nowrap" title="${esc(c.title)}">${esc(c.label)}</th>`;
+    }
+    const known=!!c.team;
+    const colorMap={r16:'#00d4ff',oct:'#4f8ef7',qf:'#f5c518',sf:'#f58218',finalist:'#e63030',
+                    third:'#64b464',champion:'#e63030',award_bota:'#2ecc71',award_mvp:'#2ecc71'};
+    const cl=known?(colorMap[c.kind]||'var(--muted)'):'var(--muted)';
+    return `<th style="font-size:.6rem;white-space:nowrap;color:${cl};${known?'font-weight:700':''}" title="${esc(c.title)}">${esc(c.label)}</th>`;
+  }).join('');
+
+  // Points row
+  const ptsRow = cols.map(c=>{
+    if(c.kind==='group'){
+      return `<th style="background:rgba(79,142,247,.04);color:var(--muted);font-size:.52rem">${esc(c.group)}</th>`;
+    }
+    return `<th style="color:var(--muted);opacity:.7;font-size:.52rem">${esc(c.points||'')}</th>`;
+  }).join('');
+
+  let html = `<div class="ext-wrap"><table class="ext-table"><thead>
+  <tr>
+    <th class="name-hdr" rowspan="3" style="vertical-align:middle">Pos · Nombre</th>
+    ${topRow}
+    <th class="tot-hdr" rowspan="3" style="vertical-align:middle">TOTAL</th>
+  </tr>
+  <tr>${colRow}</tr>
+  <tr>${ptsRow}</tr>
+  </thead><tbody>`;
+
+  // Build a lookup: player name → row in extData
+  const extRowMap = {};
+  extData.rows.forEach(r=>{ extRowMap[r.name]=r; });
+
+  data.forEach(p=>{
+    const rank = DATA.leaderboard.findIndex(x=>x.name===p.name)+1;
+    const rc = rank===1?'r1':rank===2?'r2':rank===3?'r3':'rx';
+    const extRow = extRowMap[p.name];
+    html += `<tr><td class="name-cell"><span class="rnum ${rc}" style="margin-right:6px;font-size:1rem">${rank}</span>${esc(p.name)}</td>`;
+
+    if(extRow){
+      extRow.cells.forEach((cell,i)=>{
+        const kind = cols[i]?.kind||'';
+        const ttip = extCellTitle(cell, cols[i]);
+        if(cell.display==='·' || cell.pts===0){
+          // group zeros still show '0' not '·'
+          const isGroup = kind==='group';
+          html+=`<td class="ep ext-zero" title="${esc(ttip)}">${isGroup?'0':'·'}</td>`;
+        } else {
+          if(kind==='group'){
+            const exactPts = DATA.meta?.scoringConfig?.pts_exact||7;
+            const cls = cell.pts >= exactPts ? 'ext-exact' : 'ext-res';
+            html+=`<td class="ep ${cls}" title="${esc(ttip)}">${esc(cell.display)}</td>`;
+          } else {
+            const cls = hitClass(kind);
+            html+=`<td class="ep ${cls}" title="${esc(ttip)}">${esc(cell.display)}</td>`;
+          }
+        }
+      });
+    } else {
+      cols.forEach(()=>{ html+=`<td class="ep ext-zero">·</td>`; });
+    }
+
+    html+=`<td class="tot-cell">${p.score.total}</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
+// Download extended table as CSV from public page
+function downloadPublicExtendedCSV(){
+  const extData = DATA.extendedTable;
+  if(!extData) return;
+  const cols = extData.columns;
+  const ERL = {r16:'16avos',oct:'Octavos',qf:'Cuartos',sf:'Semis',finalist:'Finalistas',
+                group:'Grupos',third:'3er P.',champion:'Campeón',award_bota:'Premios',award_mvp:'Premios'};
+  const csvEsc = v=>`"${String(v||'').replace(/"/g,'""')}"`;
+  const hdr = ['Pos','Nombre',...cols.map(c=>`${ERL[c.kind]||c.kind}:${c.label}`),'TOTAL'];
+  const rows = [hdr];
+  extData.rows.forEach(r=>{
+    rows.push([r.pos, r.name, ...r.cells.map(c=>c.pts>0?c.display:''), r.total]);
+  });
+  const csv = rows.map(r=>r.map(csvEsc).join(',')).join('\r\n');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='clasificacion_extendida.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════
+// RESULTADOS TAB
+// ══════════════════════════════════════════════
+function renderResultados(){
+  const el = document.getElementById('tab-resultados');
+  const gr = DATA.groupResults;
+  const played = Object.values(gr);
+  const byGrp = {};
+  played.forEach(m=>{
+    if(!byGrp[m.grp]) byGrp[m.grp]=[];
+    byGrp[m.grp].push(m);
+  });
+
+  let html = '';
+  if(!played.length){
+    html = `<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:.85rem">Todavía no se han jugado partidos</div>`;
+  } else {
+    html = `<div class="results-phase"><div class="phase-title">Fase de Grupos</div><div class="match-grid">`;
+    Object.entries(byGrp).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([g,ms])=>{
+      ms.forEach(m=>{
+        const hWin = +m.h > +m.a, aWin = +m.a > +m.h;
+        html+=`<div class="match-card played">
+          <div>
+            <div class="mt h ${hWin?'winner':''}">${teamHTML(m.home,true,true)}</div>
+            <div class="match-date" style="text-align:right">${m.date} · ${m.time}h</div>
+            ${m.venue?`<div class="match-venue" style="text-align:right">${vn(m.venue)}</div>`:''}
+          </div>
+          <div class="score-display played">${m.h} – ${m.a}</div>
+          <div>
+            <div class="mt ${aWin?'winner':''}">${teamHTML(m.away,false,true)}</div>
+            <div class="match-date">Grupo ${g}</div>
+          </div>
+        </div>`;
+      });
+    });
+    html += '</div></div>';
+  }
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+// GRUPOS TAB
+// ══════════════════════════════════════════════
+function renderGrupos(){
+  const el = document.getElementById('tab-grupos');
+  const st = DATA.standings;
+
+  let html = '<div class="groups-grid">';
+  GROUPS.forEach(g=>{
+    const rows = st[g]||[];
+    html+=`<div class="grp-card">
+      <div class="grp-hdr">Grupo ${g}</div>
+      <table class="grp-table">
+        <thead><tr><th>Equipo</th><th>PJ</th><th>PG</th><th>PE</th><th>PP</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th></tr></thead>
+        <tbody>
+          ${rows.map((r,i)=>`<tr class="${i===0?'q1':i===1?'q2':''}">
+            <td><span class="pb ${i===0?'pb1':i===1?'pb2':i===2?'pb3':'pbx'}">${i+1}</span>${teamHTML(r.t,false,true)}</td>
+            <td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td>
+            <td>${r.gf}</td><td>${r.gc}</td>
+            <td style="color:${r.gd>0?'var(--green)':r.gd<0?'var(--red)':'var(--muted)'}">${r.gd>0?'+':''}${r.gd}</td>
+            <td class="pts-cell">${r.pts}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+// ELIMINATORIAS TAB
+// ══════════════════════════════════════════════
+function renderEliminatorias(){
+  const el = document.getElementById('tab-eliminatorias');
+  const ko = DATA.koResults;
+  if(!Object.keys(ko).length){
+    el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:.85rem">La fase eliminatoria comenzará cuando terminen los grupos</div>`;
+    return;
+  }
+
+  const r16ids=['M73','M74','M75','M76','M77','M78','M79','M80','M81','M82','M83','M84','M85','M86','M87','M88'];
+  const octids=['M89','M90','M91','M92','M93','M94','M95','M96'];
+  const qfids=['M97','M98','M99','M100'];
+  const sfids=['M101','M102'];
+  const phases = [
+    {title:'Dieciseisavos de Final', ids: Object.keys(ko).filter(k=>r16ids.includes(k))},
+    {title:'Octavos de Final',       ids: Object.keys(ko).filter(k=>octids.includes(k))},
+    {title:'Cuartos de Final',       ids: Object.keys(ko).filter(k=>qfids.includes(k))},
+    {title:'Semifinales',            ids: Object.keys(ko).filter(k=>sfids.includes(k))},
+    {title:'Final de Consolación',   ids: Object.keys(ko).filter(k=>k==='CONS')},
+    {title:'⭐ Gran Final',           ids: Object.keys(ko).filter(k=>k==='FINAL')},
+  ].filter(p=>p.ids.length);
+
+  let html='';
+  phases.forEach(phase=>{
+    html+=`<div class="results-phase"><div class="phase-title">${phase.title}</div><div class="match-grid">`;
+    phase.ids.forEach(id=>{
+      const m=ko[id];
+      html+=`<div class="ko-match-card">
+        <div class="ko-card-hdr">
+          <span class="ko-card-lbl">${m.label}</span>
+          <span class="ko-card-date">${m.date} · ${m.time}h${m.venue?` · ${vn(m.venue)}`:''}</span>
+        </div>
+        <div class="ko-card-body">
+          <div class="kt h ${m.winner && m.winner === m.home ? 'winner' : ''} ${!m.home?'pending':''}">
+            ${m.home ? teamHTML(m.home,true,true) : '<span style="color:var(--muted);font-style:italic">?</span>'}
+          </div>
+          <div class="ko-score ${m.winner?'':'tbd'}">${m.winner ? '🏆' : 'vs'}</div>
+          <div class="kt ${m.winner && m.winner === m.away ? 'winner' : ''} ${!m.away?'pending':''}">
+            ${m.away ? teamHTML(m.away,false,true) : '<span style="color:var(--muted);font-style:italic">?</span>'}
+          </div>
+        </div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+
+  // Podium if available
+  const p=DATA.podium;
+  if(p.champion){
+    html+=`<div class="results-phase"><div class="phase-title">🏆 Podio Final</div>
+      <div class="podium">
+        ${[['🥇','Campeón',p.champion,'first'],['🥈','Subcampeón',p.runnerUp,''],['🥉','3er Puesto',p.third,''],['4️⃣','4º Puesto',p.fourth,'']].filter(x=>x[2]).map(([med,lbl,t,cls])=>`
+          <div class="podium-card ${cls}">
+            <div class="podium-medal">${med}</div>
+            <div class="podium-pos">${lbl}</div>
+            <div class="podium-team">${teamHTML(t,false,false)}</div>
+          </div>`).join('')}
+      </div></div>`;
+  }
+
+  // Awards
+  if(p.champion || DATA.awards.bota || DATA.awards.mvp){
+    html+=`<div class="results-phase"><div class="phase-title">Premios Individuales</div>
+      <div class="match-grid" style="max-width:500px">
+        ${DATA.awards.bota?`<div class="match-card played" style="grid-template-columns:auto 1fr">
+          <div style="font-size:1.5rem">👟</div>
+          <div><div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px">Bota de Oro</div>
+          <div style="font-weight:700;font-size:.95rem">${esc(DATA.awards.bota)}</div></div>
+        </div>`:''}
+        ${DATA.awards.mvp?`<div class="match-card played" style="grid-template-columns:auto 1fr">
+          <div style="font-size:1.5rem">⭐</div>
+          <div><div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px">MVP del Torneo</div>
+          <div style="font-weight:700;font-size:.95rem">${esc(DATA.awards.mvp)}</div></div>
+        </div>`:''}
+      </div></div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    const tabs=['clasificacion','resultados','grupos','eliminatorias'];
+    b.classList.toggle('active',tabs[i]===tab);
+  });
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  // ext-mode only applies to the clasificación tab
+  if(tab !== 'clasificacion') document.body.classList.remove('ext-mode');
+  else {
+    const ext = document.getElementById('extToggle')?.checked;
+    document.body.classList.toggle('ext-mode', !!ext);
+  }
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── Banderas ──────────────────────────────────────────────────
+const FLAG_BASE = 'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/flags/4x3/';
+const TEAM_FLAG_CODES = {
+  'Alemania':'de','Arabia Saudita':'sa','Argelia':'dz','Argentina':'ar','Australia':'au','Austria':'at',
+  'Bélgica':'be','Bosnia y Herz.':'ba','Brasil':'br','Cabo Verde':'cv','Canadá':'ca','Colombia':'co',
+  'Corea del Sur':'kr','Costa de Marfil':'ci','Croacia':'hr','Curazao':'cw','Ecuador':'ec','Egipto':'eg',
+  'Escocia':'gb-sct','España':'es','Estados Unidos':'us','Francia':'fr','Ghana':'gh','Haití':'ht',
+  'Inglaterra':'gb-eng','Irán':'ir','Irak':'iq','Japón':'jp','Jordania':'jo','Marruecos':'ma',
+  'México':'mx','Noruega':'no','Nueva Zelanda':'nz','Países Bajos':'nl','Panamá':'pa','Paraguay':'py',
+  'Portugal':'pt','Qatar':'qa','RD Congo':'cd','Rep. Checa':'cz','Senegal':'sn','Sudáfrica':'za',
+  'Suecia':'se','Suiza':'ch','Túnez':'tn','Turquía':'tr','Uruguay':'uy','Uzbekistán':'uz',
+};
+const VN = {
+  'Estadio Ciudad de México':'Cd. México','Estadio Guadalajara':'Guadalajara','Estadio Monterrey':'Monterrey',
+  'Toronto Stadium':'Toronto','BC Place Vancouver':'Vancouver','Los Angeles Stadium':'Los Ángeles',
+  'San Francisco Bay Area Stadium':'San Francisco','Nueva York Nueva Jersey Stadium':'Nueva York',
+  'Boston Stadium':'Boston','Seattle Stadium':'Seattle','Houston Stadium':'Houston',
+  'Dallas Stadium':'Dallas','Atlanta Stadium':'Atlanta','Miami Stadium':'Miami',
+  'Philadelphia Stadium':'Philadelphia','Kansas City Stadium':'Kansas City',
+};
+const vn = v => VN[v] || v || '';
+function flagHTML(team, small=true){
+  const code = TEAM_FLAG_CODES[team];
+  if(!code) return '';
+  const [w,h] = small ? [20,13] : [24,16];
+  return `<img src="${FLAG_BASE}${code}.svg" alt="${esc(team)}" style="width:${w}px;height:${h}px;border-radius:2px;border:1px solid rgba(255,255,255,.15);object-fit:cover;vertical-align:middle;flex-shrink:0">`;
+}
+function teamHTML(team, reverse=false, small=true){
+  if(!team) return '';
+  return `<span class="team-with-flag${reverse?' reverse':''}">${flagHTML(team,small)}<span>${esc(team)}</span></span>`;
+}
+
+// ══════════════════════════════════════════════
+// AUTO-REFRESH every 5 minutes
+// ══════════════════════════════════════════════
+window.PORRA_DATA = {"meta":{"generated":"2026-05-25T12:21:38.989Z","title":"Porra Mundial 2026 · LCS","totalPlayers":2,"scoringVersion":"2026-porra-v2","scoringConfig":{"pts_exact":7,"pts_result":4,"pts_r16_slot":9,"pts_r16_noslot":6,"pts_oct":12,"pts_qf":18,"pts_sf":24,"pts_final":32,"pts_3rd":15,"pts_champion":50,"pts_bota":25,"pts_mvp":25},"fifaRankingSnapshot":"Ranking FIFA congelado antes del inicio de la porra","fifaRankingMeta":{"source":"FIFA/Coca-Cola Men's World Ranking","officialUpdate":"2026-04-01","frozenForTournamentAt":"2026-05-24","nextOfficialUpdateAnnounced":"2026-06-11","note":"Ranking congelado para desempates de la porra Mundial 2026."}},"rankingMeta":{"source":"FIFA/Coca-Cola Men's World Ranking","officialUpdate":"2026-04-01","frozenForTournamentAt":"2026-05-24","nextOfficialUpdateAnnounced":"2026-06-11","note":"Ranking congelado para desempates de la porra Mundial 2026."},"fifaRanking":{"Francia":1,"España":2,"Argentina":3,"Inglaterra":4,"Portugal":5,"Brasil":6,"Países Bajos":7,"Marruecos":8,"Bélgica":9,"Alemania":10,"Croacia":11,"Colombia":13,"Senegal":14,"México":15,"Estados Unidos":16,"Uruguay":17,"Japón":18,"Suiza":19,"Irán":21,"Turquía":22,"Ecuador":23,"Austria":24,"Corea del Sur":25,"Australia":27,"Argelia":28,"Egipto":29,"Canadá":30,"Noruega":31,"Panamá":33,"Costa de Marfil":34,"Suecia":38,"Paraguay":40,"Rep. Checa":41,"Escocia":43,"Túnez":44,"RD Congo":46,"Uzbekistán":50,"Qatar":55,"Irak":57,"Sudáfrica":60,"Arabia Saudita":61,"Jordania":63,"Bosnia y Herz.":65,"Cabo Verde":69,"Ghana":74,"Curazao":82,"Haití":83,"Nueva Zelanda":85},"groupResults":{"A1":{"h":1,"a":0,"home":"México","away":"Sudáfrica","grp":"A","date":"Jue 11 Jun","time":"21:00","venue":"Estadio Ciudad de México"},"A2":{"h":1,"a":0,"home":"Corea del Sur","away":"Rep. Checa","grp":"A","date":"Vie 12 Jun","time":"04:00","venue":"Estadio Guadalajara"},"A3":{"h":1,"a":0,"home":"Rep. Checa","away":"Sudáfrica","grp":"A","date":"Jue 18 Jun","time":"18:00","venue":"Atlanta Stadium"},"A4":{"h":0,"a":1,"home":"México","away":"Corea del Sur","grp":"A","date":"Vie 19 Jun","time":"03:00","venue":"Estadio Guadalajara"},"A5":{"h":2,"a":5,"home":"Rep. Checa","away":"México","grp":"A","date":"Jue 25 Jun","time":"03:00","venue":"Estadio Ciudad de México"},"A6":{"h":1,"a":5,"home":"Sudáfrica","away":"Corea del Sur","grp":"A","date":"Jue 25 Jun","time":"03:00","venue":"Estadio Monterrey"},"B1":{"h":1,"a":521,"home":"Canadá","away":"Bosnia y Herz.","grp":"B","date":"Vie 12 Jun","time":"21:00","venue":"Toronto Stadium"},"B2":{"h":1,"a":5,"home":"Qatar","away":"Suiza","grp":"B","date":"Sáb 13 Jun","time":"21:00","venue":"San Francisco Bay Area Stadium"},"B3":{"h":1,"a":5,"home":"Suiza","away":"Bosnia y Herz.","grp":"B","date":"Jue 18 Jun","time":"21:00","venue":"Los Angeles Stadium"},"B4":{"h":1,"a":5,"home":"Canadá","away":"Qatar","grp":"B","date":"Vie 19 Jun","time":"00:00","venue":"BC Place Vancouver"},"B5":{"h":1,"a":4,"home":"Suiza","away":"Canadá","grp":"B","date":"Mié 24 Jun","time":"21:00","venue":"BC Place Vancouver"},"B6":{"h":2,"a":3,"home":"Bosnia y Herz.","away":"Qatar","grp":"B","date":"Mié 24 Jun","time":"21:00","venue":"Seattle Stadium"},"C1":{"h":1,"a":0,"home":"Brasil","away":"Marruecos","grp":"C","date":"Dom 14 Jun","time":"00:00","venue":"Nueva York Nueva Jersey Stadium"},"C2":{"h":2,"a":3,"home":"Haití","away":"Escocia","grp":"C","date":"Dom 14 Jun","time":"03:00","venue":"Boston Stadium"},"C3":{"h":1,"a":4,"home":"Escocia","away":"Marruecos","grp":"C","date":"Sáb 20 Jun","time":"00:00","venue":"Boston Stadium"},"C4":{"h":1,"a":5,"home":"Brasil","away":"Haití","grp":"C","date":"Sáb 20 Jun","time":"03:00","venue":"Philadelphia Stadium"},"C5":{"h":7,"a":5,"home":"Escocia","away":"Brasil","grp":"C","date":"Jue 25 Jun","time":"00:00","venue":"Miami Stadium"},"C6":{"h":1,"a":7,"home":"Marruecos","away":"Haití","grp":"C","date":"Jue 25 Jun","time":"00:00","venue":"Atlanta Stadium"},"D1":{"h":8,"a":41,"home":"Estados Unidos","away":"Paraguay","grp":"D","date":"Sáb 13 Jun","time":"03:00","venue":"Los Angeles Stadium"},"D2":{"h":4,"a":5,"home":"Australia","away":"Turquía","grp":"D","date":"Lun 15 Jun","time":"06:00","venue":"BC Place Vancouver"},"D3":{"h":1,"a":4,"home":"Estados Unidos","away":"Australia","grp":"D","date":"Vie 19 Jun","time":"21:00","venue":"Seattle Stadium"},"D4":{"h":5,"a":5,"home":"Turquía","away":"Paraguay","grp":"D","date":"Dom 21 Jun","time":"06:00","venue":"San Francisco Bay Area Stadium"},"D5":{"h":4,"a":4,"home":"Turquía","away":"Estados Unidos","grp":"D","date":"Vie 26 Jun","time":"04:00","venue":"Los Angeles Stadium"},"D6":{"h":5,"a":88,"home":"Paraguay","away":"Australia","grp":"D","date":"Vie 26 Jun","time":"04:00","venue":"San Francisco Bay Area Stadium"},"E1":{"h":1,"a":5,"home":"Alemania","away":"Curazao","grp":"E","date":"Dom 14 Jun","time":"19:00","venue":"Houston Stadium"},"E2":{"h":1,"a":5,"home":"Costa de Marfil","away":"Ecuador","grp":"E","date":"Lun 15 Jun","time":"01:00","venue":"Philadelphia Stadium"},"E3":{"h":1,"a":5,"home":"Alemania","away":"Costa de Marfil","grp":"E","date":"Sáb 20 Jun","time":"22:00","venue":"Toronto Stadium"},"E4":{"h":1,"a":5,"home":"Ecuador","away":"Curazao","grp":"E","date":"Dom 21 Jun","time":"02:00","venue":"Kansas City Stadium"},"E5":{"h":1,"a":3,"home":"Ecuador","away":"Alemania","grp":"E","date":"Jue 25 Jun","time":"22:00","venue":"Nueva York Nueva Jersey Stadium"},"E6":{"h":7,"a":8,"home":"Curazao","away":"Costa de Marfil","grp":"E","date":"Jue 25 Jun","time":"22:00","venue":"Philadelphia Stadium"},"F1":{"h":1,"a":12,"home":"Países Bajos","away":"Japón","grp":"F","date":"Dom 14 Jun","time":"22:00","venue":"Dallas Stadium"},"F2":{"h":1,"a":8,"home":"Suecia","away":"Túnez","grp":"F","date":"Lun 15 Jun","time":"04:00","venue":"Estadio Monterrey"},"F3":{"h":2,"a":23,"home":"Países Bajos","away":"Suecia","grp":"F","date":"Sáb 20 Jun","time":"19:00","venue":"Houston Stadium"},"F4":{"h":2,"a":3,"home":"Túnez","away":"Japón","grp":"F","date":"Lun 22 Jun","time":"06:00","venue":"Estadio Monterrey"},"F5":{"h":1,"a":8,"home":"Túnez","away":"Países Bajos","grp":"F","date":"Vie 26 Jun","time":"01:00","venue":"Kansas City Stadium"},"F6":{"h":89,"a":9,"home":"Japón","away":"Suecia","grp":"F","date":"Vie 26 Jun","time":"01:00","venue":"Dallas Stadium"},"G1":{"h":1,"a":2,"home":"Bélgica","away":"Egipto","grp":"G","date":"Lun 15 Jun","time":"21:00","venue":"Seattle Stadium"},"G2":{"h":1,"a":2,"home":"Irán","away":"Nueva Zelanda","grp":"G","date":"Mar 16 Jun","time":"03:00","venue":"Los Angeles Stadium"},"G3":{"h":2,"a":5,"home":"Bélgica","away":"Irán","grp":"G","date":"Dom 21 Jun","time":"21:00","venue":"Los Angeles Stadium"},"G4":{"h":41,"a":5,"home":"Nueva Zelanda","away":"Egipto","grp":"G","date":"Lun 22 Jun","time":"03:00","venue":"BC Place Vancouver"},"G5":{"h":8,"a":9,"home":"Nueva Zelanda","away":"Bélgica","grp":"G","date":"Dom 28 Jun","time":"05:00","venue":"BC Place Vancouver"},"G6":{"h":65,"a":8,"home":"Egipto","away":"Irán","grp":"G","date":"Dom 28 Jun","time":"05:00","venue":"Seattle Stadium"},"H1":{"h":8,"a":5,"home":"España","away":"Cabo Verde","grp":"H","date":"Lun 15 Jun","time":"18:00","venue":"Atlanta Stadium"},"H2":{"h":4,"a":5,"home":"Arabia Saudita","away":"Uruguay","grp":"H","date":"Mar 16 Jun","time":"00:00","venue":"Miami Stadium"},"H3":{"h":4,"a":88,"home":"España","away":"Arabia Saudita","grp":"H","date":"Dom 21 Jun","time":"18:00","venue":"Atlanta Stadium"},"H4":{"h":47,"a":8,"home":"Uruguay","away":"Cabo Verde","grp":"H","date":"Lun 22 Jun","time":"00:00","venue":"Miami Stadium"},"H5":{"h":4,"a":1,"home":"Uruguay","away":"España","grp":"H","date":"Sáb 27 Jun","time":"02:00","venue":"Estadio Guadalajara"},"H6":{"h":1,"a":2,"home":"Cabo Verde","away":"Arabia Saudita","grp":"H","date":"Sáb 27 Jun","time":"02:00","venue":"Houston Stadium"},"I1":{"h":1,"a":2,"home":"Francia","away":"Senegal","grp":"I","date":"Mar 16 Jun","time":"21:00","venue":"Nueva York Nueva Jersey Stadium"},"I2":{"h":1,"a":2,"home":"Irak","away":"Noruega","grp":"I","date":"Mié 17 Jun","time":"00:00","venue":"Boston Stadium"},"I3":{"h":1,"a":2,"home":"Francia","away":"Irak","grp":"I","date":"Lun 22 Jun","time":"23:00","venue":"Philadelphia Stadium"},"I4":{"h":18,"a":5,"home":"Noruega","away":"Senegal","grp":"I","date":"Mar 23 Jun","time":"02:00","venue":"Nueva York Nueva Jersey Stadium"},"I5":{"h":8,"a":2,"home":"Noruega","away":"Francia","grp":"I","date":"Vie 26 Jun","time":"21:00","venue":"Boston Stadium"},"I6":{"h":5,"a":2,"home":"Senegal","away":"Irak","grp":"I","date":"Vie 26 Jun","time":"21:00","venue":"Toronto Stadium"},"J1":{"h":1,"a":1,"home":"Argentina","away":"Argelia","grp":"J","date":"Mié 17 Jun","time":"03:00","venue":"Kansas City Stadium"},"J2":{"h":1,"a":22,"home":"Austria","away":"Jordania","grp":"J","date":"Jue 18 Jun","time":"06:00","venue":"San Francisco Bay Area Stadium"},"J3":{"h":1,"a":55,"home":"Argentina","away":"Austria","grp":"J","date":"Lun 22 Jun","time":"19:00","venue":"Dallas Stadium"},"J4":{"h":18,"a":1,"home":"Jordania","away":"Argelia","grp":"J","date":"Mié 24 Jun","time":"05:00","venue":"San Francisco Bay Area Stadium"},"J5":{"h":12,"a":1,"home":"Jordania","away":"Argentina","grp":"J","date":"Dom 28 Jun","time":"04:00","venue":"Dallas Stadium"},"J6":{"h":2,"a":15,"home":"Argelia","away":"Austria","grp":"J","date":"Dom 28 Jun","time":"04:00","venue":"Kansas City Stadium"},"K1":{"h":1,"a":21,"home":"Portugal","away":"RD Congo","grp":"K","date":"Mié 17 Jun","time":"19:00","venue":"Houston Stadium"},"K2":{"h":5,"a":1,"home":"Uzbekistán","away":"Colombia","grp":"K","date":"Jue 18 Jun","time":"04:00","venue":"Estadio Ciudad de México"},"K3":{"h":8,"a":56,"home":"Portugal","away":"Uzbekistán","grp":"K","date":"Mar 23 Jun","time":"19:00","venue":"Houston Stadium"},"K4":{"h":1,"a":51,"home":"Colombia","away":"RD Congo","grp":"K","date":"Mié 24 Jun","time":"04:00","venue":"Estadio Guadalajara"},"K5":{"h":5,"a":6,"home":"Colombia","away":"Portugal","grp":"K","date":"Dom 28 Jun","time":"01:30","venue":"Miami Stadium"},"K6":{"h":58,"a":8,"home":"RD Congo","away":"Uzbekistán","grp":"K","date":"Dom 28 Jun","time":"01:30","venue":"Atlanta Stadium"},"L1":{"h":1,"a":2,"home":"Inglaterra","away":"Croacia","grp":"L","date":"Mié 17 Jun","time":"22:00","venue":"Dallas Stadium"},"L2":{"h":1,"a":2,"home":"Ghana","away":"Panamá","grp":"L","date":"Jue 18 Jun","time":"01:00","venue":"Toronto Stadium"},"L3":{"h":58,"a":85,"home":"Inglaterra","away":"Ghana","grp":"L","date":"Mar 23 Jun","time":"22:00","venue":"Boston Stadium"},"L4":{"h":2,"a":3,"home":"Panamá","away":"Croacia","grp":"L","date":"Mié 24 Jun","time":"01:00","venue":"Toronto Stadium"},"L5":{"h":61,"a":6,"home":"Panamá","away":"Inglaterra","grp":"L","date":"Sáb 27 Jun","time":"23:00","venue":"Nueva York Nueva Jersey Stadium"},"L6":{"h":5,"a":6,"home":"Croacia","away":"Ghana","grp":"L","date":"Sáb 27 Jun","time":"23:00","venue":"Philadelphia Stadium"}},"standings":{"A":[{"pos":1,"t":"Corea del Sur","pj":3,"pg":3,"pe":0,"pp":0,"gf":7,"gc":1,"gd":6,"pts":9},{"pos":2,"t":"México","pj":3,"pg":2,"pe":0,"pp":1,"gf":6,"gc":3,"gd":3,"pts":6},{"pos":3,"t":"Rep. Checa","pj":3,"pg":1,"pe":0,"pp":2,"gf":3,"gc":6,"gd":-3,"pts":3},{"pos":4,"t":"Sudáfrica","pj":3,"pg":0,"pe":0,"pp":3,"gf":1,"gc":7,"gd":-6,"pts":0}],"B":[{"pos":1,"t":"Bosnia y Herz.","pj":3,"pg":2,"pe":0,"pp":1,"gf":528,"gc":5,"gd":523,"pts":6},{"pos":2,"t":"Qatar","pj":3,"pg":2,"pe":0,"pp":1,"gf":9,"gc":8,"gd":1,"pts":6},{"pos":3,"t":"Suiza","pj":3,"pg":1,"pe":0,"pp":2,"gf":7,"gc":10,"gd":-3,"pts":3},{"pos":4,"t":"Canadá","pj":3,"pg":1,"pe":0,"pp":2,"gf":6,"gc":527,"gd":-521,"pts":3}],"C":[{"pos":1,"t":"Haití","pj":3,"pg":2,"pe":0,"pp":1,"gf":14,"gc":5,"gd":9,"pts":6},{"pos":2,"t":"Escocia","pj":3,"pg":2,"pe":0,"pp":1,"gf":11,"gc":11,"gd":0,"pts":6},{"pos":3,"t":"Marruecos","pj":3,"pg":1,"pe":0,"pp":2,"gf":5,"gc":9,"gd":-4,"pts":3},{"pos":4,"t":"Brasil","pj":3,"pg":1,"pe":0,"pp":2,"gf":7,"gc":12,"gd":-5,"pts":3}],"D":[{"pos":1,"t":"Australia","pj":3,"pg":2,"pe":0,"pp":1,"gf":96,"gc":11,"gd":85,"pts":6},{"pos":2,"t":"Turquía","pj":3,"pg":1,"pe":2,"pp":0,"gf":14,"gc":13,"gd":1,"pts":5},{"pos":3,"t":"Paraguay","pj":3,"pg":1,"pe":1,"pp":1,"gf":51,"gc":101,"gd":-50,"pts":4},{"pos":4,"t":"Estados Unidos","pj":3,"pg":0,"pe":1,"pp":2,"gf":13,"gc":49,"gd":-36,"pts":1}],"E":[{"pos":1,"t":"Curazao","pj":3,"pg":2,"pe":0,"pp":1,"gf":17,"gc":10,"gd":7,"pts":6},{"pos":2,"t":"Costa de Marfil","pj":3,"pg":2,"pe":0,"pp":1,"gf":14,"gc":13,"gd":1,"pts":6},{"pos":3,"t":"Ecuador","pj":3,"pg":1,"pe":0,"pp":2,"gf":7,"gc":9,"gd":-2,"pts":3},{"pos":4,"t":"Alemania","pj":3,"pg":1,"pe":0,"pp":2,"gf":5,"gc":11,"gd":-6,"pts":3}],"F":[{"pos":1,"t":"Japón","pj":3,"pg":3,"pe":0,"pp":0,"gf":104,"gc":12,"gd":92,"pts":9},{"pos":2,"t":"Túnez","pj":3,"pg":1,"pe":0,"pp":2,"gf":11,"gc":12,"gd":-1,"pts":3},{"pos":3,"t":"Países Bajos","pj":3,"pg":1,"pe":0,"pp":2,"gf":11,"gc":36,"gd":-25,"pts":3},{"pos":4,"t":"Suecia","pj":3,"pg":1,"pe":0,"pp":2,"gf":33,"gc":99,"gd":-66,"pts":3}],"G":[{"pos":1,"t":"Nueva Zelanda","pj":3,"pg":2,"pe":0,"pp":1,"gf":51,"gc":15,"gd":36,"pts":6},{"pos":2,"t":"Egipto","pj":3,"pg":2,"pe":0,"pp":1,"gf":72,"gc":50,"gd":22,"pts":6},{"pos":3,"t":"Bélgica","pj":3,"pg":1,"pe":0,"pp":2,"gf":12,"gc":15,"gd":-3,"pts":3},{"pos":4,"t":"Irán","pj":3,"pg":1,"pe":0,"pp":2,"gf":14,"gc":69,"gd":-55,"pts":3}],"H":[{"pos":1,"t":"Uruguay","pj":3,"pg":3,"pe":0,"pp":0,"gf":56,"gc":13,"gd":43,"pts":9},{"pos":2,"t":"Arabia Saudita","pj":3,"pg":2,"pe":0,"pp":1,"gf":94,"gc":10,"gd":84,"pts":6},{"pos":3,"t":"España","pj":3,"pg":1,"pe":0,"pp":2,"gf":13,"gc":97,"gd":-84,"pts":3},{"pos":4,"t":"Cabo Verde","pj":3,"pg":0,"pe":0,"pp":3,"gf":14,"gc":57,"gd":-43,"pts":0}],"I":[{"pos":1,"t":"Noruega","pj":3,"pg":3,"pe":0,"pp":0,"gf":28,"gc":8,"gd":20,"pts":9},{"pos":2,"t":"Senegal","pj":3,"pg":2,"pe":0,"pp":1,"gf":12,"gc":21,"gd":-9,"pts":6},{"pos":3,"t":"Irak","pj":3,"pg":1,"pe":0,"pp":2,"gf":5,"gc":8,"gd":-3,"pts":3},{"pos":4,"t":"Francia","pj":3,"pg":0,"pe":0,"pp":3,"gf":4,"gc":12,"gd":-8,"pts":0}],"J":[{"pos":1,"t":"Jordania","pj":3,"pg":3,"pe":0,"pp":0,"gf":52,"gc":3,"gd":49,"pts":9},{"pos":2,"t":"Austria","pj":3,"pg":2,"pe":0,"pp":1,"gf":71,"gc":25,"gd":46,"pts":6},{"pos":3,"t":"Argelia","pj":3,"pg":0,"pe":1,"pp":2,"gf":4,"gc":34,"gd":-30,"pts":1},{"pos":4,"t":"Argentina","pj":3,"pg":0,"pe":1,"pp":2,"gf":3,"gc":68,"gd":-65,"pts":1}],"K":[{"pos":1,"t":"RD Congo","pj":3,"pg":3,"pe":0,"pp":0,"gf":130,"gc":10,"gd":120,"pts":9},{"pos":2,"t":"Uzbekistán","pj":3,"pg":2,"pe":0,"pp":1,"gf":69,"gc":67,"gd":2,"pts":6},{"pos":3,"t":"Portugal","pj":3,"pg":1,"pe":0,"pp":2,"gf":15,"gc":82,"gd":-67,"pts":3},{"pos":4,"t":"Colombia","pj":3,"pg":0,"pe":0,"pp":3,"gf":7,"gc":62,"gd":-55,"pts":0}],"L":[{"pos":1,"t":"Panamá","pj":3,"pg":2,"pe":0,"pp":1,"gf":65,"gc":10,"gd":55,"pts":6},{"pos":2,"t":"Ghana","pj":3,"pg":2,"pe":0,"pp":1,"gf":92,"gc":65,"gd":27,"pts":6},{"pos":3,"t":"Croacia","pj":3,"pg":2,"pe":0,"pp":1,"gf":10,"gc":9,"gd":1,"pts":6},{"pos":4,"t":"Inglaterra","pj":3,"pg":0,"pe":0,"pp":3,"gf":65,"gc":148,"gd":-83,"pts":0}]},"koResults":{"M73":{"winner":"México","home":"México","away":"Qatar","label":"M73","date":"Dom 28 Jun","time":"21:00","venue":"Los Angeles Stadium"},"M74":{"winner":"Curazao","home":"Curazao","away":"Marruecos","label":"M74","date":"Lun 29 Jun","time":"22:30","venue":"Boston Stadium"},"M75":{"winner":"Escocia","home":"Japón","away":"Escocia","label":"M75","date":"Mar 30 Jun","time":"03:00","venue":"Estadio Monterrey"},"M76":{"winner":"Haití","home":"Haití","away":"Túnez","label":"M76","date":"Lun 29 Jun","time":"19:00","venue":"Houston Stadium"},"M77":{"winner":"Noruega","home":"Noruega","away":"Paraguay","label":"M77","date":"Mar 30 Jun","time":"23:00","venue":"Nueva York Nueva Jersey Stadium"},"M78":{"winner":"Senegal","home":"Costa de Marfil","away":"Senegal","label":"M78","date":"Mar 30 Jun","time":"19:00","venue":"Dallas Stadium"},"M79":{"winner":"Ecuador","home":"Corea del Sur","away":"Ecuador","label":"M79","date":"Mié 1 Jul","time":"03:00","venue":"Estadio Ciudad de México"},"M80":{"winner":"Panamá","home":"Panamá","away":"Irak","label":"M80","date":"Mié 1 Jul","time":"18:00","venue":"Atlanta Stadium"},"M81":{"winner":"Australia","home":"Australia","away":"Suiza","label":"M81","date":"Jue 2 Jul","time":"02:00","venue":"San Francisco Bay Area Stadium"},"M82":{"winner":"Nueva Zelanda","home":"Nueva Zelanda","away":"Rep. Checa","label":"M82","date":"Mié 1 Jul","time":"22:00","venue":"Seattle Stadium"},"M83":{"winner":"Uzbekistán","home":"Uzbekistán","away":"Ghana","label":"M83","date":"Vie 3 Jul","time":"01:00","venue":"Toronto Stadium"},"M84":{"winner":"Uruguay","home":"Uruguay","away":"Austria","label":"M84","date":"Jue 2 Jul","time":"21:00","venue":"Los Angeles Stadium"},"M85":{"winner":"Bosnia y Herz.","home":"Bosnia y Herz.","away":"Bélgica","label":"M85","date":"Vie 3 Jul","time":"05:00","venue":"BC Place Vancouver"},"M86":{"winner":"Jordania","home":"Jordania","away":"Arabia Saudita","label":"M86","date":"Sáb 4 Jul","time":"00:00","venue":"Miami Stadium"},"M87":{"winner":"RD Congo","home":"RD Congo","away":"Croacia","label":"M87","date":"Sáb 4 Jul","time":"03:30","venue":"Kansas City Stadium"},"M88":{"winner":"Turquía","home":"Turquía","away":"Egipto","label":"M88","date":"Vie 3 Jul","time":"20:00","venue":"Dallas Stadium"},"M89":{"winner":"Curazao","home":"Curazao","away":"Noruega","label":"M89","date":"Sáb 4 Jul","time":"23:00","venue":"Philadelphia Stadium"},"M90":{"winner":"México","home":"México","away":"Escocia","label":"M90","date":"Sáb 4 Jul","time":"19:00","venue":"Houston Stadium"},"M91":{"winner":"Haití","home":"Haití","away":"Senegal","label":"M91","date":"Dom 5 Jul","time":"22:00","venue":"Nueva York Nueva Jersey Stadium"},"M92":{"winner":"Ecuador","home":"Ecuador","away":"Panamá","label":"M92","date":"Lun 6 Jul","time":"02:00","venue":"Estadio Ciudad de México"},"M93":{"winner":"Uzbekistán","home":"Uzbekistán","away":"Uruguay","label":"M93","date":"Lun 6 Jul","time":"21:00","venue":"Dallas Stadium"},"M94":{"winner":"Nueva Zelanda","home":"Australia","away":"Nueva Zelanda","label":"M94","date":"Mar 7 Jul","time":"02:00","venue":"Seattle Stadium"},"M95":{"winner":"Jordania","home":"Jordania","away":"Turquía","label":"M95","date":"Mar 7 Jul","time":"18:00","venue":"Atlanta Stadium"},"M96":{"winner":"Bosnia y Herz.","home":"Bosnia y Herz.","away":"RD Congo","label":"M96","date":"Mar 7 Jul","time":"22:00","venue":"BC Place Vancouver"},"M97":{"winner":"Curazao","home":"Curazao","away":"México","label":"M97","date":"Jue 9 Jul","time":"22:00","venue":"Boston Stadium"},"M98":{"winner":"Nueva Zelanda","home":"Uzbekistán","away":"Nueva Zelanda","label":"M98","date":"Vie 10 Jul","time":"21:00","venue":"Los Angeles Stadium"},"M99":{"winner":"Haití","home":"Haití","away":"Ecuador","label":"M99","date":"Sáb 11 Jul","time":"23:00","venue":"Miami Stadium"},"M100":{"winner":"Jordania","home":"Jordania","away":"Bosnia y Herz.","label":"M100","date":"Dom 12 Jul","time":"03:00","venue":"Kansas City Stadium"},"M101":{"winner":"Curazao","home":"Curazao","away":"Nueva Zelanda","label":"Semifinal 1 (M101)","date":"Mar 14 Jul","time":"21:00","venue":"Dallas Stadium"},"M102":{"winner":"Haití","home":"Haití","away":"Jordania","label":"Semifinal 2 (M102)","date":"Mié 15 Jul","time":"21:00","venue":"Atlanta Stadium"},"CONS":{"winner":"Nueva Zelanda","home":"Nueva Zelanda","away":"Jordania","label":"M103 · 3er Puesto","date":"Sáb 18 Jul","time":"23:00","venue":"Miami Stadium"},"FINAL":{"winner":"Curazao","home":"Curazao","away":"Haití","label":"M104 · GRAN FINAL","date":"Dom 19 Jul","time":"21:00","venue":"Nueva York Nueva Jersey Stadium"}},"extendedTable":{"generated":"2026-05-25T12:21:38.989Z","columns":[{"kind":"group","id":"A1","label":"MEX 1–0 RSA","title":"México vs Sudáfrica · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"A2","label":"KOR 1–0 CZE","title":"Corea del Sur vs Rep. Checa · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"A3","label":"CZE 1–0 RSA","title":"Rep. Checa vs Sudáfrica · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"A4","label":"MEX 0–1 KOR","title":"México vs Corea del Sur · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"A5","label":"CZE 2–5 MEX","title":"Rep. Checa vs México · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"A6","label":"RSA 1–5 KOR","title":"Sudáfrica vs Corea del Sur · Grupo A","points":"7/4pt","team":"","slot":"","group":"A"},{"kind":"group","id":"B1","label":"CAN 1–521 BIH","title":"Canadá vs Bosnia y Herz. · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"B2","label":"QAT 1–5 SUI","title":"Qatar vs Suiza · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"B3","label":"SUI 1–5 BIH","title":"Suiza vs Bosnia y Herz. · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"B4","label":"CAN 1–5 QAT","title":"Canadá vs Qatar · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"B5","label":"SUI 1–4 CAN","title":"Suiza vs Canadá · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"B6","label":"BIH 2–3 QAT","title":"Bosnia y Herz. vs Qatar · Grupo B","points":"7/4pt","team":"","slot":"","group":"B"},{"kind":"group","id":"C1","label":"BRA 1–0 MAR","title":"Brasil vs Marruecos · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"C2","label":"HAI 2–3 SCO","title":"Haití vs Escocia · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"C3","label":"SCO 1–4 MAR","title":"Escocia vs Marruecos · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"C4","label":"BRA 1–5 HAI","title":"Brasil vs Haití · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"C5","label":"SCO 7–5 BRA","title":"Escocia vs Brasil · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"C6","label":"MAR 1–7 HAI","title":"Marruecos vs Haití · Grupo C","points":"7/4pt","team":"","slot":"","group":"C"},{"kind":"group","id":"D1","label":"USA 8–41 PAR","title":"Estados Unidos vs Paraguay · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"D2","label":"AUS 4–5 TUR","title":"Australia vs Turquía · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"D3","label":"USA 1–4 AUS","title":"Estados Unidos vs Australia · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"D4","label":"TUR 5–5 PAR","title":"Turquía vs Paraguay · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"D5","label":"TUR 4–4 USA","title":"Turquía vs Estados Unidos · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"D6","label":"PAR 5–88 AUS","title":"Paraguay vs Australia · Grupo D","points":"7/4pt","team":"","slot":"","group":"D"},{"kind":"group","id":"E1","label":"GER 1–5 CUW","title":"Alemania vs Curazao · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"E2","label":"CIV 1–5 ECU","title":"Costa de Marfil vs Ecuador · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"E3","label":"GER 1–5 CIV","title":"Alemania vs Costa de Marfil · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"E4","label":"ECU 1–5 CUW","title":"Ecuador vs Curazao · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"E5","label":"ECU 1–3 GER","title":"Ecuador vs Alemania · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"E6","label":"CUW 7–8 CIV","title":"Curazao vs Costa de Marfil · Grupo E","points":"7/4pt","team":"","slot":"","group":"E"},{"kind":"group","id":"F1","label":"NED 1–12 JPN","title":"Países Bajos vs Japón · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"F2","label":"SWE 1–8 TUN","title":"Suecia vs Túnez · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"F3","label":"NED 2–23 SWE","title":"Países Bajos vs Suecia · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"F4","label":"TUN 2–3 JPN","title":"Túnez vs Japón · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"F5","label":"TUN 1–8 NED","title":"Túnez vs Países Bajos · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"F6","label":"JPN 89–9 SWE","title":"Japón vs Suecia · Grupo F","points":"7/4pt","team":"","slot":"","group":"F"},{"kind":"group","id":"G1","label":"BEL 1–2 EGY","title":"Bélgica vs Egipto · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"G2","label":"IRN 1–2 NZL","title":"Irán vs Nueva Zelanda · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"G3","label":"BEL 2–5 IRN","title":"Bélgica vs Irán · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"G4","label":"NZL 41–5 EGY","title":"Nueva Zelanda vs Egipto · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"G5","label":"NZL 8–9 BEL","title":"Nueva Zelanda vs Bélgica · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"G6","label":"EGY 65–8 IRN","title":"Egipto vs Irán · Grupo G","points":"7/4pt","team":"","slot":"","group":"G"},{"kind":"group","id":"H1","label":"ESP 8–5 CPV","title":"España vs Cabo Verde · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"H2","label":"KSA 4–5 URU","title":"Arabia Saudita vs Uruguay · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"H3","label":"ESP 4–88 KSA","title":"España vs Arabia Saudita · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"H4","label":"URU 47–8 CPV","title":"Uruguay vs Cabo Verde · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"H5","label":"URU 4–1 ESP","title":"Uruguay vs España · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"H6","label":"CPV 1–2 KSA","title":"Cabo Verde vs Arabia Saudita · Grupo H","points":"7/4pt","team":"","slot":"","group":"H"},{"kind":"group","id":"I1","label":"FRA 1–2 SEN","title":"Francia vs Senegal · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"I2","label":"IRQ 1–2 NOR","title":"Irak vs Noruega · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"I3","label":"FRA 1–2 IRQ","title":"Francia vs Irak · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"I4","label":"NOR 18–5 SEN","title":"Noruega vs Senegal · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"I5","label":"NOR 8–2 FRA","title":"Noruega vs Francia · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"I6","label":"SEN 5–2 IRQ","title":"Senegal vs Irak · Grupo I","points":"7/4pt","team":"","slot":"","group":"I"},{"kind":"group","id":"J1","label":"ARG 1–1 ALG","title":"Argentina vs Argelia · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"J2","label":"AUT 1–22 JOR","title":"Austria vs Jordania · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"J3","label":"ARG 1–55 AUT","title":"Argentina vs Austria · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"J4","label":"JOR 18–1 ALG","title":"Jordania vs Argelia · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"J5","label":"JOR 12–1 ARG","title":"Jordania vs Argentina · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"J6","label":"ALG 2–15 AUT","title":"Argelia vs Austria · Grupo J","points":"7/4pt","team":"","slot":"","group":"J"},{"kind":"group","id":"K1","label":"POR 1–21 COD","title":"Portugal vs RD Congo · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"K2","label":"UZB 5–1 COL","title":"Uzbekistán vs Colombia · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"K3","label":"POR 8–56 UZB","title":"Portugal vs Uzbekistán · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"K4","label":"COL 1–51 COD","title":"Colombia vs RD Congo · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"K5","label":"COL 5–6 POR","title":"Colombia vs Portugal · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"K6","label":"COD 58–8 UZB","title":"RD Congo vs Uzbekistán · Grupo K","points":"7/4pt","team":"","slot":"","group":"K"},{"kind":"group","id":"L1","label":"ENG 1–2 CRO","title":"Inglaterra vs Croacia · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"group","id":"L2","label":"GHA 1–2 PAN","title":"Ghana vs Panamá · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"group","id":"L3","label":"ENG 58–85 GHA","title":"Inglaterra vs Ghana · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"group","id":"L4","label":"PAN 2–3 CRO","title":"Panamá vs Croacia · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"group","id":"L5","label":"PAN 61–6 ENG","title":"Panamá vs Inglaterra · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"group","id":"L6","label":"CRO 5–6 GHA","title":"Croacia vs Ghana · Grupo L","points":"7/4pt","team":"","slot":"","group":"L"},{"kind":"r16","id":"M73_H","label":"MEX","title":"M73 H · 2A · México","points":"9/6pt","team":"México","slot":"2A","group":""},{"kind":"r16","id":"M73_A","label":"QAT","title":"M73 A · 2B · Qatar","points":"9/6pt","team":"Qatar","slot":"2B","group":""},{"kind":"r16","id":"M74_H","label":"CUW","title":"M74 H · 1E · Curazao","points":"9/6pt","team":"Curazao","slot":"1E","group":""},{"kind":"r16","id":"M74_A","label":"MAR","title":"M74 A · T_M74 · Marruecos","points":"9/6pt","team":"Marruecos","slot":"T_M74","group":""},{"kind":"r16","id":"M75_H","label":"JPN","title":"M75 H · 1F · Japón","points":"9/6pt","team":"Japón","slot":"1F","group":""},{"kind":"r16","id":"M75_A","label":"SCO","title":"M75 A · 2C · Escocia","points":"9/6pt","team":"Escocia","slot":"2C","group":""},{"kind":"r16","id":"M76_H","label":"HAI","title":"M76 H · 1C · Haití","points":"9/6pt","team":"Haití","slot":"1C","group":""},{"kind":"r16","id":"M76_A","label":"TUN","title":"M76 A · 2F · Túnez","points":"9/6pt","team":"Túnez","slot":"2F","group":""},{"kind":"r16","id":"M77_H","label":"NOR","title":"M77 H · 1I · Noruega","points":"9/6pt","team":"Noruega","slot":"1I","group":""},{"kind":"r16","id":"M77_A","label":"PAR","title":"M77 A · T_M77 · Paraguay","points":"9/6pt","team":"Paraguay","slot":"T_M77","group":""},{"kind":"r16","id":"M78_H","label":"CIV","title":"M78 H · 2E · Costa de Marfil","points":"9/6pt","team":"Costa de Marfil","slot":"2E","group":""},{"kind":"r16","id":"M78_A","label":"SEN","title":"M78 A · 2I · Senegal","points":"9/6pt","team":"Senegal","slot":"2I","group":""},{"kind":"r16","id":"M79_H","label":"KOR","title":"M79 H · 1A · Corea del Sur","points":"9/6pt","team":"Corea del Sur","slot":"1A","group":""},{"kind":"r16","id":"M79_A","label":"ECU","title":"M79 A · T_M79 · Ecuador","points":"9/6pt","team":"Ecuador","slot":"T_M79","group":""},{"kind":"r16","id":"M80_H","label":"PAN","title":"M80 H · 1L · Panamá","points":"9/6pt","team":"Panamá","slot":"1L","group":""},{"kind":"r16","id":"M80_A","label":"IRQ","title":"M80 A · T_M80 · Irak","points":"9/6pt","team":"Irak","slot":"T_M80","group":""},{"kind":"r16","id":"M81_H","label":"AUS","title":"M81 H · 1D · Australia","points":"9/6pt","team":"Australia","slot":"1D","group":""},{"kind":"r16","id":"M81_A","label":"SUI","title":"M81 A · T_M81 · Suiza","points":"9/6pt","team":"Suiza","slot":"T_M81","group":""},{"kind":"r16","id":"M82_H","label":"NZL","title":"M82 H · 1G · Nueva Zelanda","points":"9/6pt","team":"Nueva Zelanda","slot":"1G","group":""},{"kind":"r16","id":"M82_A","label":"CZE","title":"M82 A · T_M82 · Rep. Checa","points":"9/6pt","team":"Rep. Checa","slot":"T_M82","group":""},{"kind":"r16","id":"M83_H","label":"UZB","title":"M83 H · 2K · Uzbekistán","points":"9/6pt","team":"Uzbekistán","slot":"2K","group":""},{"kind":"r16","id":"M83_A","label":"GHA","title":"M83 A · 2L · Ghana","points":"9/6pt","team":"Ghana","slot":"2L","group":""},{"kind":"r16","id":"M84_H","label":"URU","title":"M84 H · 1H · Uruguay","points":"9/6pt","team":"Uruguay","slot":"1H","group":""},{"kind":"r16","id":"M84_A","label":"AUT","title":"M84 A · 2J · Austria","points":"9/6pt","team":"Austria","slot":"2J","group":""},{"kind":"r16","id":"M85_H","label":"BIH","title":"M85 H · 1B · Bosnia y Herz.","points":"9/6pt","team":"Bosnia y Herz.","slot":"1B","group":""},{"kind":"r16","id":"M85_A","label":"BEL","title":"M85 A · T_M85 · Bélgica","points":"9/6pt","team":"Bélgica","slot":"T_M85","group":""},{"kind":"r16","id":"M86_H","label":"JOR","title":"M86 H · 1J · Jordania","points":"9/6pt","team":"Jordania","slot":"1J","group":""},{"kind":"r16","id":"M86_A","label":"KSA","title":"M86 A · 2H · Arabia Saudita","points":"9/6pt","team":"Arabia Saudita","slot":"2H","group":""},{"kind":"r16","id":"M87_H","label":"COD","title":"M87 H · 1K · RD Congo","points":"9/6pt","team":"RD Congo","slot":"1K","group":""},{"kind":"r16","id":"M87_A","label":"CRO","title":"M87 A · T_M87 · Croacia","points":"9/6pt","team":"Croacia","slot":"T_M87","group":""},{"kind":"r16","id":"M88_H","label":"TUR","title":"M88 H · 2D · Turquía","points":"9/6pt","team":"Turquía","slot":"2D","group":""},{"kind":"r16","id":"M88_A","label":"EGY","title":"M88 A · 2G · Egipto","points":"9/6pt","team":"Egipto","slot":"2G","group":""},{"kind":"oct","id":"oct_M73_México","label":"MEX","title":"Clasificado a octavos: México (clasif. desde M73)","points":"12pt","team":"México","slot":"","group":""},{"kind":"oct","id":"oct_M74_Curazao","label":"CUW","title":"Clasificado a octavos: Curazao (clasif. desde M74)","points":"12pt","team":"Curazao","slot":"","group":""},{"kind":"oct","id":"oct_M75_Escocia","label":"SCO","title":"Clasificado a octavos: Escocia (clasif. desde M75)","points":"12pt","team":"Escocia","slot":"","group":""},{"kind":"oct","id":"oct_M76_Haití","label":"HAI","title":"Clasificado a octavos: Haití (clasif. desde M76)","points":"12pt","team":"Haití","slot":"","group":""},{"kind":"oct","id":"oct_M77_Noruega","label":"NOR","title":"Clasificado a octavos: Noruega (clasif. desde M77)","points":"12pt","team":"Noruega","slot":"","group":""},{"kind":"oct","id":"oct_M78_Senegal","label":"SEN","title":"Clasificado a octavos: Senegal (clasif. desde M78)","points":"12pt","team":"Senegal","slot":"","group":""},{"kind":"oct","id":"oct_M79_Ecuador","label":"ECU","title":"Clasificado a octavos: Ecuador (clasif. desde M79)","points":"12pt","team":"Ecuador","slot":"","group":""},{"kind":"oct","id":"oct_M80_Panamá","label":"PAN","title":"Clasificado a octavos: Panamá (clasif. desde M80)","points":"12pt","team":"Panamá","slot":"","group":""},{"kind":"oct","id":"oct_M81_Australia","label":"AUS","title":"Clasificado a octavos: Australia (clasif. desde M81)","points":"12pt","team":"Australia","slot":"","group":""},{"kind":"oct","id":"oct_M82_Nueva Zelanda","label":"NZL","title":"Clasificado a octavos: Nueva Zelanda (clasif. desde M82)","points":"12pt","team":"Nueva Zelanda","slot":"","group":""},{"kind":"oct","id":"oct_M83_Uzbekistán","label":"UZB","title":"Clasificado a octavos: Uzbekistán (clasif. desde M83)","points":"12pt","team":"Uzbekistán","slot":"","group":""},{"kind":"oct","id":"oct_M84_Uruguay","label":"URU","title":"Clasificado a octavos: Uruguay (clasif. desde M84)","points":"12pt","team":"Uruguay","slot":"","group":""},{"kind":"oct","id":"oct_M85_Bosnia y Herz.","label":"BIH","title":"Clasificado a octavos: Bosnia y Herz. (clasif. desde M85)","points":"12pt","team":"Bosnia y Herz.","slot":"","group":""},{"kind":"oct","id":"oct_M86_Jordania","label":"JOR","title":"Clasificado a octavos: Jordania (clasif. desde M86)","points":"12pt","team":"Jordania","slot":"","group":""},{"kind":"oct","id":"oct_M87_RD Congo","label":"COD","title":"Clasificado a octavos: RD Congo (clasif. desde M87)","points":"12pt","team":"RD Congo","slot":"","group":""},{"kind":"oct","id":"oct_M88_Turquía","label":"TUR","title":"Clasificado a octavos: Turquía (clasif. desde M88)","points":"12pt","team":"Turquía","slot":"","group":""},{"kind":"qf","id":"qf_M89_Curazao","label":"CUW","title":"Clasificado a cuartos: Curazao (clasif. desde M89)","points":"18pt","team":"Curazao","slot":"","group":""},{"kind":"qf","id":"qf_M90_México","label":"MEX","title":"Clasificado a cuartos: México (clasif. desde M90)","points":"18pt","team":"México","slot":"","group":""},{"kind":"qf","id":"qf_M91_Haití","label":"HAI","title":"Clasificado a cuartos: Haití (clasif. desde M91)","points":"18pt","team":"Haití","slot":"","group":""},{"kind":"qf","id":"qf_M92_Ecuador","label":"ECU","title":"Clasificado a cuartos: Ecuador (clasif. desde M92)","points":"18pt","team":"Ecuador","slot":"","group":""},{"kind":"qf","id":"qf_M93_Uzbekistán","label":"UZB","title":"Clasificado a cuartos: Uzbekistán (clasif. desde M93)","points":"18pt","team":"Uzbekistán","slot":"","group":""},{"kind":"qf","id":"qf_M94_Nueva Zelanda","label":"NZL","title":"Clasificado a cuartos: Nueva Zelanda (clasif. desde M94)","points":"18pt","team":"Nueva Zelanda","slot":"","group":""},{"kind":"qf","id":"qf_M95_Jordania","label":"JOR","title":"Clasificado a cuartos: Jordania (clasif. desde M95)","points":"18pt","team":"Jordania","slot":"","group":""},{"kind":"qf","id":"qf_M96_Bosnia y Herz.","label":"BIH","title":"Clasificado a cuartos: Bosnia y Herz. (clasif. desde M96)","points":"18pt","team":"Bosnia y Herz.","slot":"","group":""},{"kind":"sf","id":"sf_M97_Curazao","label":"CUW","title":"Clasificado a semis: Curazao (clasif. desde M97)","points":"24pt","team":"Curazao","slot":"","group":""},{"kind":"sf","id":"sf_M98_Nueva Zelanda","label":"NZL","title":"Clasificado a semis: Nueva Zelanda (clasif. desde M98)","points":"24pt","team":"Nueva Zelanda","slot":"","group":""},{"kind":"sf","id":"sf_M99_Haití","label":"HAI","title":"Clasificado a semis: Haití (clasif. desde M99)","points":"24pt","team":"Haití","slot":"","group":""},{"kind":"sf","id":"sf_M100_Jordania","label":"JOR","title":"Clasificado a semis: Jordania (clasif. desde M100)","points":"24pt","team":"Jordania","slot":"","group":""},{"kind":"finalist","id":"finalist_M101_Curazao","label":"CUW","title":"Clasificado a la final: Curazao (clasif. desde Semifinal 1 (M101))","points":"32pt","team":"Curazao","slot":"","group":""},{"kind":"finalist","id":"finalist_M102_Haití","label":"HAI","title":"Clasificado a la final: Haití (clasif. desde Semifinal 2 (M102))","points":"32pt","team":"Haití","slot":"","group":""},{"kind":"third","id":"CONS","label":"NZL","title":"Ganador 3er puesto: Nueva Zelanda","points":"15pt","team":"Nueva Zelanda","slot":"","group":""},{"kind":"champion","id":"FINAL","label":"CUW","title":"Campeón: Curazao","points":"50pt","team":"Curazao","slot":"","group":""},{"kind":"award_bota","id":"_bota","label":"Bota","title":"Bota de Oro","points":"25pt","team":"","slot":"","group":""},{"kind":"award_mvp","id":"_mvp","label":"MVP","title":"MVP del Torneo","points":"25pt","team":"","slot":"","group":""}],"rows":[{"pos":1,"name":"vbcvb","total":423,"cells":[{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 1–0 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–0 | Real: 1–0 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–1 | Real: 1–0 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 0–1 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–2 | Real: 2–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–521 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–4 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 2–3 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–3 | Real: 1–0 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 2–3 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–4 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–1 | Real: 7–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 1–7 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–3 | Real: 8–41 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 4–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–4 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–1 | Real: 5–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–1 | Real: 4–4 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 5–88 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–2 | Real: 1–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–2 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 1–3 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 7–8 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–12 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–8 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 2–23 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–3 | Real: 2–3 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–8 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–1 | Real: 89–9 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–2 | Real: 2–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–2 | Real: 41–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–2 | Real: 8–9 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–0 | Real: 65–8 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–2 | Real: 8–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 4–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–2 | Real: 4–88 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–1 | Real: 47–8 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–0 | Real: 4–1 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–3 | Real: 1–2 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–1 | Real: 18–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–0 | Real: 8–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 5–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–3 | Real: 1–1 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 1–22 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 1–55 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–0 | Real: 18–1 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–0 | Real: 12–1 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 2–15 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 1–21 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–2 | Real: 5–1 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 8–56 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–0 | Real: 1–51 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 5–6 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 58–8 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 58–85 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 2–3 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–1 | Real: 61–6 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 5–6 | Sin puntos","kind":"group"},{"display":"+6","pts":6,"title":"Apuesta: Corea del Sur | Slot: 2A | Real: México | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Bosnia y Herz. | Slot: 2B | Real: Qatar | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Curazao | Slot: 1E | Real: Curazao | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Turquía | Slot: T_M74 | Real: Marruecos | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Japón | Slot: 1F | Real: Japón | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Haití | Slot: 2C | Real: Escocia | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Marruecos | Slot: 1C | Real: Haití | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Países Bajos | Slot: 2F | Real: Túnez | Sin puntos","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Noruega | Slot: 1I | Real: Noruega | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Túnez | Slot: T_M77 | Real: Paraguay | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Costa de Marfil | Slot: 2E | Real: Costa de Marfil | Acierto en sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Senegal | Slot: 2I | Real: Senegal | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: México | Slot: 1A | Real: Corea del Sur | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Escocia | Slot: T_M79 | Real: Ecuador | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Croacia | Slot: 1L | Real: Panamá | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Uzbekistán | Slot: T_M80 | Real: Irak | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Paraguay | Slot: 1D | Real: Australia | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Canadá | Slot: T_M81 | Real: Suiza | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Egipto | Slot: 1G | Real: Nueva Zelanda | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Austria | Slot: T_M82 | Real: Rep. Checa | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Colombia | Slot: 2K | Real: Uzbekistán | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Panamá | Slot: 2L | Real: Ghana | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Uruguay | Slot: 1H | Real: Uruguay | Acierto en sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Argelia | Slot: 2J | Real: Austria | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Qatar | Slot: 1B | Real: Bosnia y Herz. | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Irán | Slot: T_M85 | Real: Bélgica | Sin puntos","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Jordania | Slot: 1J | Real: Jordania | Acierto en sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Cabo Verde | Slot: 2H | Real: Arabia Saudita | Sin puntos","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Portugal | Slot: 1K | Real: RD Congo | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Irak | Slot: T_M87 | Real: Croacia | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Australia | Slot: 2D | Real: Turquía | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Bélgica | Slot: 2G | Real: Egipto | Acierto fuera de sitio","kind":"r16"},{"display":"+12","pts":12,"title":"Apuesta: México | Real: México | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Turquía | Real: Curazao | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Japón | Real: Escocia | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Marruecos | Real: Haití | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Túnez | Real: Noruega | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Costa de Marfil | Real: Senegal | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: México | Real: Ecuador | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Panamá | Real: Panamá | +12 pts","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Australia | Real: Australia | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Austria | Real: Nueva Zelanda | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Panamá | Real: Uzbekistán | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Uruguay | Real: Uruguay | +12 pts","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Bosnia y Herz. | Real: Bosnia y Herz. | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Cabo Verde | Real: Jordania | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Irak | Real: RD Congo | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Turquía | Real: Turquía | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Turquía | Real: Curazao | Sin puntos","kind":"qf"},{"display":"+18","pts":18,"title":"Apuesta: México | Real: México | +18 pts","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Marruecos | Real: Haití | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: México | Real: Ecuador | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Panamá | Real: Uzbekistán | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Canadá | Real: Nueva Zelanda | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Australia | Real: Jordania | Sin puntos","kind":"qf"},{"display":"+18","pts":18,"title":"Apuesta: Bosnia y Herz. | Real: Bosnia y Herz. | +18 pts","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Turquía | Real: Curazao | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Canadá | Real: Nueva Zelanda | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Marruecos | Real: Haití | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Australia | Real: Jordania | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Turquía | Real: Curazao | Sin puntos","kind":"finalist"},{"display":"·","pts":0,"title":"Apuesta: Marruecos | Real: Haití | Sin puntos","kind":"finalist"},{"display":"·","pts":0,"title":"Apuesta: Australia | Real: Nueva Zelanda | Sin puntos","kind":"third"},{"display":"·","pts":0,"title":"Apuesta: Turquía | Real: Curazao | Sin puntos","kind":"champion"},{"display":"·","pts":0,"title":"Apuesta: ghjhghgj | Real: hgjghj | Sin puntos","kind":"award_bota"},{"display":"·","pts":0,"title":"Apuesta: hgjghjgh | Real: ghjhgjhgj | Sin puntos","kind":"award_mvp"}]},{"pos":2,"name":"gfhgfh","total":345,"cells":[{"display":"+7","pts":7,"title":"Respuesta: 1–0 | Real: 1–0 | Exacto","kind":"group"},{"display":"+7","pts":7,"title":"Respuesta: 1–0 | Real: 1–0 | Exacto","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–3 | Real: 1–0 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 0–1 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–3 | Real: 2–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 1–521 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–3 | Real: 1–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 1–4 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–0 | Real: 2–3 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 1–0 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 2–3 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–2 | Real: 1–4 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 7–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 1–7 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 8–41 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 4–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 1–4 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–2 | Real: 5–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 4–4 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–0 | Real: 5–88 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–3 | Real: 1–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 1–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–5 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–2 | Real: 1–3 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–1 | Real: 7–8 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 1–12 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 1–8 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 2–23 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 2–3 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 1–8 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 89–9 | Sin puntos","kind":"group"},{"display":"+7","pts":7,"title":"Respuesta: 1–2 | Real: 1–2 | Exacto","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 2–5 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–2 | Real: 41–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 8–9 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–0 | Real: 65–8 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 8–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 4–5 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 4–88 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–1 | Real: 47–8 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–3 | Real: 4–1 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–2 | Real: 1–2 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–1 | Real: 1–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–0 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–2 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 18–5 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–3 | Real: 8–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–0 | Real: 5–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–0 | Real: 1–1 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–22 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 1–55 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–3 | Real: 18–1 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 0–1 | Real: 12–1 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 2–0 | Real: 2–15 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 0–3 | Real: 1–21 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 5–1 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–0 | Real: 8–56 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 1–51 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–3 | Real: 5–6 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–1 | Real: 58–8 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 2–3 | Real: 1–2 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–0 | Real: 1–2 | Sin puntos","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 1–0 | Real: 58–85 | Sin puntos","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 1–3 | Real: 2–3 | Resultado","kind":"group"},{"display":"+4","pts":4,"title":"Respuesta: 3–1 | Real: 61–6 | Resultado","kind":"group"},{"display":"0","pts":0,"title":"Respuesta: 3–1 | Real: 5–6 | Sin puntos","kind":"group"},{"display":"·","pts":0,"title":"Apuesta: Sudáfrica | Slot: 2A | Real: México | Sin puntos","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Canadá | Slot: 2B | Real: Qatar | Sin puntos","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Alemania | Slot: 1E | Real: Curazao | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Haití | Slot: T_M74 | Real: Marruecos | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Suecia | Slot: 1F | Real: Japón | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Marruecos | Slot: 2C | Real: Escocia | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Escocia | Slot: 1C | Real: Haití | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Japón | Slot: 2F | Real: Túnez | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Irak | Slot: 1I | Real: Noruega | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Países Bajos | Slot: T_M77 | Real: Paraguay | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Curazao | Slot: 2E | Real: Costa de Marfil | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Senegal | Slot: 2I | Real: Senegal | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: México | Slot: 1A | Real: Corea del Sur | Acierto fuera de sitio","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Ecuador | Slot: T_M79 | Real: Ecuador | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Croacia | Slot: 1L | Real: Panamá | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: RD Congo | Slot: T_M80 | Real: Irak | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Paraguay | Slot: 1D | Real: Australia | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Francia | Slot: T_M81 | Real: Suiza | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Egipto | Slot: 1G | Real: Nueva Zelanda | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Jordania | Slot: T_M82 | Real: Rep. Checa | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Colombia | Slot: 2K | Real: Uzbekistán | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Panamá | Slot: 2L | Real: Ghana | Acierto fuera de sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Arabia Saudita | Slot: 1H | Real: Uruguay | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Argentina | Slot: 2J | Real: Austria | Sin puntos","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Bosnia y Herz. | Slot: 1B | Real: Bosnia y Herz. | Acierto en sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Irán | Slot: T_M85 | Real: Bélgica | Sin puntos","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Argelia | Slot: 1J | Real: Jordania | Sin puntos","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Uruguay | Slot: 2H | Real: Arabia Saudita | Acierto fuera de sitio","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Portugal | Slot: 1K | Real: RD Congo | Sin puntos","kind":"r16"},{"display":"·","pts":0,"title":"Apuesta: Inglaterra | Slot: T_M87 | Real: Croacia | Sin puntos","kind":"r16"},{"display":"+9","pts":9,"title":"Apuesta: Turquía | Slot: 2D | Real: Turquía | Acierto en sitio","kind":"r16"},{"display":"+6","pts":6,"title":"Apuesta: Nueva Zelanda | Slot: 2G | Real: Egipto | Acierto fuera de sitio","kind":"r16"},{"display":"+12","pts":12,"title":"Apuesta: México | Real: México | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Alemania | Real: Curazao | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Suecia | Real: Escocia | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Japón | Real: Haití | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Países Bajos | Real: Noruega | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Senegal | Real: Senegal | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: México | Real: Ecuador | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Croacia | Real: Panamá | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Paraguay | Real: Australia | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Nueva Zelanda | Real: Nueva Zelanda | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Colombia | Real: Uzbekistán | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Arabia Saudita | Real: Uruguay | Sin puntos","kind":"oct"},{"display":"+12","pts":12,"title":"Apuesta: Bosnia y Herz. | Real: Bosnia y Herz. | +12 pts","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Argelia | Real: Jordania | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Portugal | Real: RD Congo | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Nueva Zelanda | Real: Turquía | Sin puntos","kind":"oct"},{"display":"·","pts":0,"title":"Apuesta: Países Bajos | Real: Curazao | Sin puntos","kind":"qf"},{"display":"+18","pts":18,"title":"Apuesta: México | Real: México | +18 pts","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Japón | Real: Haití | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: México | Real: Ecuador | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Colombia | Real: Uzbekistán | Sin puntos","kind":"qf"},{"display":"+18","pts":18,"title":"Apuesta: Nueva Zelanda | Real: Nueva Zelanda | +18 pts","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Nueva Zelanda | Real: Jordania | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Portugal | Real: Bosnia y Herz. | Sin puntos","kind":"qf"},{"display":"·","pts":0,"title":"Apuesta: Sudáfrica | Real: Curazao | Sin puntos","kind":"sf"},{"display":"+24","pts":24,"title":"Apuesta: Nueva Zelanda | Real: Nueva Zelanda | +24 pts","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Japón | Real: Haití | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Nueva Zelanda | Real: Jordania | Sin puntos","kind":"sf"},{"display":"·","pts":0,"title":"Apuesta: Sudáfrica | Real: Curazao | Sin puntos","kind":"finalist"},{"display":"·","pts":0,"title":"Apuesta: Nueva Zelanda | Real: Haití | Sin puntos","kind":"finalist"},{"display":"·","pts":0,"title":"Apuesta: Japón | Real: Nueva Zelanda | Sin puntos","kind":"third"},{"display":"·","pts":0,"title":"Apuesta: Sudáfrica | Real: Curazao | Sin puntos","kind":"champion"},{"display":"·","pts":0,"title":"Apuesta: fghfgh | Real: hgjghj | Sin puntos","kind":"award_bota"},{"display":"·","pts":0,"title":"Apuesta: fghgfhgfhfg | Real: ghjhgjhgj | Sin puntos","kind":"award_mvp"}]}]},"podium":{"champion":"Curazao","runnerUp":"Haití","third":"Nueva Zelanda","fourth":"Jordania"},"awards":{"bota":"hgjghj","mvp":"ghjhgjhgj"},"leaderboard":[{"rank":1,"name":"vbcvb","score":{"grupos":144,"r16":171,"oct":72,"qf":36,"sf":0,"final":0,"tercero":0,"campeon":0,"awards":0,"total":423,"det":{"groups":[{"key":"groups:A1","label":"México - Sudáfrica","real":"1–0","pts":0,"type":"zero"},{"key":"groups:A2","label":"Corea del Sur - Rep. Checa","real":"1–0","pts":4,"type":"result"},{"key":"groups:A3","label":"Rep. Checa - Sudáfrica","real":"1–0","pts":4,"type":"result"},{"key":"groups:A4","label":"México - Corea del Sur","real":"0–1","pts":0,"type":"zero"},{"key":"groups:A5","label":"Rep. Checa - México","real":"2–5","pts":4,"type":"result"},{"key":"groups:A6","label":"Sudáfrica - Corea del Sur","real":"1–5","pts":4,"type":"result"},{"key":"groups:B1","label":"Canadá - Bosnia y Herz.","real":"1–521","pts":4,"type":"result"},{"key":"groups:B2","label":"Qatar - Suiza","real":"1–5","pts":0,"type":"zero"},{"key":"groups:B3","label":"Suiza - Bosnia y Herz.","real":"1–5","pts":4,"type":"result"},{"key":"groups:B4","label":"Canadá - Qatar","real":"1–5","pts":4,"type":"result"},{"key":"groups:B5","label":"Suiza - Canadá","real":"1–4","pts":4,"type":"result"},{"key":"groups:B6","label":"Bosnia y Herz. - Qatar","real":"2–3","pts":4,"type":"result"},{"key":"groups:C1","label":"Brasil - Marruecos","real":"1–0","pts":0,"type":"zero"},{"key":"groups:C2","label":"Haití - Escocia","real":"2–3","pts":0,"type":"zero"},{"key":"groups:C3","label":"Escocia - Marruecos","real":"1–4","pts":4,"type":"result"},{"key":"groups:C4","label":"Brasil - Haití","real":"1–5","pts":4,"type":"result"},{"key":"groups:C5","label":"Escocia - Brasil","real":"7–5","pts":4,"type":"result"},{"key":"groups:C6","label":"Marruecos - Haití","real":"1–7","pts":0,"type":"zero"},{"key":"groups:D1","label":"Estados Unidos - Paraguay","real":"8–41","pts":4,"type":"result"},{"key":"groups:D2","label":"Australia - Turquía","real":"4–5","pts":4,"type":"result"},{"key":"groups:D3","label":"Estados Unidos - Australia","real":"1–4","pts":4,"type":"result"},{"key":"groups:D4","label":"Turquía - Paraguay","real":"5–5","pts":0,"type":"zero"},{"key":"groups:D5","label":"Turquía - Estados Unidos","real":"4–4","pts":0,"type":"zero"},{"key":"groups:D6","label":"Paraguay - Australia","real":"5–88","pts":0,"type":"zero"},{"key":"groups:E1","label":"Alemania - Curazao","real":"1–5","pts":4,"type":"result"},{"key":"groups:E2","label":"Costa de Marfil - Ecuador","real":"1–5","pts":0,"type":"zero"},{"key":"groups:E3","label":"Alemania - Costa de Marfil","real":"1–5","pts":4,"type":"result"},{"key":"groups:E4","label":"Ecuador - Curazao","real":"1–5","pts":0,"type":"zero"},{"key":"groups:E5","label":"Ecuador - Alemania","real":"1–3","pts":0,"type":"zero"},{"key":"groups:E6","label":"Curazao - Costa de Marfil","real":"7–8","pts":0,"type":"zero"},{"key":"groups:F1","label":"Países Bajos - Japón","real":"1–12","pts":4,"type":"result"},{"key":"groups:F2","label":"Suecia - Túnez","real":"1–8","pts":4,"type":"result"},{"key":"groups:F3","label":"Países Bajos - Suecia","real":"2–23","pts":0,"type":"zero"},{"key":"groups:F4","label":"Túnez - Japón","real":"2–3","pts":4,"type":"result"},{"key":"groups:F5","label":"Túnez - Países Bajos","real":"1–8","pts":4,"type":"result"},{"key":"groups:F6","label":"Japón - Suecia","real":"89–9","pts":4,"type":"result"},{"key":"groups:G1","label":"Bélgica - Egipto","real":"1–2","pts":0,"type":"zero"},{"key":"groups:G2","label":"Irán - Nueva Zelanda","real":"1–2","pts":0,"type":"zero"},{"key":"groups:G3","label":"Bélgica - Irán","real":"2–5","pts":0,"type":"zero"},{"key":"groups:G4","label":"Nueva Zelanda - Egipto","real":"41–5","pts":0,"type":"zero"},{"key":"groups:G5","label":"Nueva Zelanda - Bélgica","real":"8–9","pts":0,"type":"zero"},{"key":"groups:G6","label":"Egipto - Irán","real":"65–8","pts":4,"type":"result"},{"key":"groups:H1","label":"España - Cabo Verde","real":"8–5","pts":0,"type":"zero"},{"key":"groups:H2","label":"Arabia Saudita - Uruguay","real":"4–5","pts":4,"type":"result"},{"key":"groups:H3","label":"España - Arabia Saudita","real":"4–88","pts":0,"type":"zero"},{"key":"groups:H4","label":"Uruguay - Cabo Verde","real":"47–8","pts":4,"type":"result"},{"key":"groups:H5","label":"Uruguay - España","real":"4–1","pts":4,"type":"result"},{"key":"groups:H6","label":"Cabo Verde - Arabia Saudita","real":"1–2","pts":4,"type":"result"},{"key":"groups:I1","label":"Francia - Senegal","real":"1–2","pts":0,"type":"zero"},{"key":"groups:I2","label":"Irak - Noruega","real":"1–2","pts":4,"type":"result"},{"key":"groups:I3","label":"Francia - Irak","real":"1–2","pts":4,"type":"result"},{"key":"groups:I4","label":"Noruega - Senegal","real":"18–5","pts":0,"type":"zero"},{"key":"groups:I5","label":"Noruega - Francia","real":"8–2","pts":4,"type":"result"},{"key":"groups:I6","label":"Senegal - Irak","real":"5–2","pts":0,"type":"zero"},{"key":"groups:J1","label":"Argentina - Argelia","real":"1–1","pts":0,"type":"zero"},{"key":"groups:J2","label":"Austria - Jordania","real":"1–22","pts":0,"type":"zero"},{"key":"groups:J3","label":"Argentina - Austria","real":"1–55","pts":0,"type":"zero"},{"key":"groups:J4","label":"Jordania - Argelia","real":"18–1","pts":4,"type":"result"},{"key":"groups:J5","label":"Jordania - Argentina","real":"12–1","pts":4,"type":"result"},{"key":"groups:J6","label":"Argelia - Austria","real":"2–15","pts":0,"type":"zero"},{"key":"groups:K1","label":"Portugal - RD Congo","real":"1–21","pts":0,"type":"zero"},{"key":"groups:K2","label":"Uzbekistán - Colombia","real":"5–1","pts":4,"type":"result"},{"key":"groups:K3","label":"Portugal - Uzbekistán","real":"8–56","pts":0,"type":"zero"},{"key":"groups:K4","label":"Colombia - RD Congo","real":"1–51","pts":0,"type":"zero"},{"key":"groups:K5","label":"Colombia - Portugal","real":"5–6","pts":0,"type":"zero"},{"key":"groups:K6","label":"RD Congo - Uzbekistán","real":"58–8","pts":0,"type":"zero"},{"key":"groups:L1","label":"Inglaterra - Croacia","real":"1–2","pts":4,"type":"result"},{"key":"groups:L2","label":"Ghana - Panamá","real":"1–2","pts":0,"type":"zero"},{"key":"groups:L3","label":"Inglaterra - Ghana","real":"58–85","pts":0,"type":"zero"},{"key":"groups:L4","label":"Panamá - Croacia","real":"2–3","pts":4,"type":"result"},{"key":"groups:L5","label":"Panamá - Inglaterra","real":"61–6","pts":4,"type":"result"},{"key":"groups:L6","label":"Croacia - Ghana","real":"5–6","pts":0,"type":"zero"}],"r16":[{"key":"r16:noslot:Corea del Sur","label":"Corea del Sur (2A)","team":"Corea del Sur","slot":"2A","pts":6,"type":"noslot"},{"key":"r16:noslot:Bosnia y Herz.","label":"Bosnia y Herz. (2B)","team":"Bosnia y Herz.","slot":"2B","pts":6,"type":"noslot"},{"key":"r16:slot:1E:Curazao","label":"Curazao (1E)","team":"Curazao","slot":"1E","pts":9,"type":"slot"},{"key":"r16:noslot:Turquía","label":"Turquía (T_M74)","team":"Turquía","slot":"T_M74","pts":6,"type":"noslot"},{"key":"r16:slot:1F:Japón","label":"Japón (1F)","team":"Japón","slot":"1F","pts":9,"type":"slot"},{"key":"r16:noslot:Haití","label":"Haití (2C)","team":"Haití","slot":"2C","pts":6,"type":"noslot"},{"key":"r16:noslot:Marruecos","label":"Marruecos (1C)","team":"Marruecos","slot":"1C","pts":6,"type":"noslot"},{"key":"r16:noslot:Países Bajos","label":"Países Bajos (2F)","team":"Países Bajos","slot":"2F","pts":0,"type":"zero"},{"key":"r16:slot:1I:Noruega","label":"Noruega (1I)","team":"Noruega","slot":"1I","pts":9,"type":"slot"},{"key":"r16:noslot:Túnez","label":"Túnez (T_M77)","team":"Túnez","slot":"T_M77","pts":6,"type":"noslot"},{"key":"r16:slot:2E:Costa de Marfil","label":"Costa de Marfil (2E)","team":"Costa de Marfil","slot":"2E","pts":9,"type":"slot"},{"key":"r16:slot:2I:Senegal","label":"Senegal (2I)","team":"Senegal","slot":"2I","pts":9,"type":"slot"},{"key":"r16:noslot:México","label":"México (1A)","team":"México","slot":"1A","pts":6,"type":"noslot"},{"key":"r16:noslot:Escocia","label":"Escocia (T_M79)","team":"Escocia","slot":"T_M79","pts":6,"type":"noslot"},{"key":"r16:noslot:Croacia","label":"Croacia (1L)","team":"Croacia","slot":"1L","pts":6,"type":"noslot"},{"key":"r16:noslot:Uzbekistán","label":"Uzbekistán (T_M80)","team":"Uzbekistán","slot":"T_M80","pts":6,"type":"noslot"},{"key":"r16:noslot:Paraguay","label":"Paraguay (1D)","team":"Paraguay","slot":"1D","pts":6,"type":"noslot"},{"key":"r16:noslot:Canadá","label":"Canadá (T_M81)","team":"Canadá","slot":"T_M81","pts":0,"type":"zero"},{"key":"r16:noslot:Egipto","label":"Egipto (1G)","team":"Egipto","slot":"1G","pts":6,"type":"noslot"},{"key":"r16:noslot:Austria","label":"Austria (T_M82)","team":"Austria","slot":"T_M82","pts":6,"type":"noslot"},{"key":"r16:noslot:Colombia","label":"Colombia (2K)","team":"Colombia","slot":"2K","pts":0,"type":"zero"},{"key":"r16:noslot:Panamá","label":"Panamá (2L)","team":"Panamá","slot":"2L","pts":6,"type":"noslot"},{"key":"r16:slot:1H:Uruguay","label":"Uruguay (1H)","team":"Uruguay","slot":"1H","pts":9,"type":"slot"},{"key":"r16:noslot:Argelia","label":"Argelia (2J)","team":"Argelia","slot":"2J","pts":0,"type":"zero"},{"key":"r16:noslot:Qatar","label":"Qatar (1B)","team":"Qatar","slot":"1B","pts":6,"type":"noslot"},{"key":"r16:noslot:Irán","label":"Irán (T_M85)","team":"Irán","slot":"T_M85","pts":0,"type":"zero"},{"key":"r16:slot:1J:Jordania","label":"Jordania (1J)","team":"Jordania","slot":"1J","pts":9,"type":"slot"},{"key":"r16:noslot:Cabo Verde","label":"Cabo Verde (2H)","team":"Cabo Verde","slot":"2H","pts":0,"type":"zero"},{"key":"r16:noslot:Portugal","label":"Portugal (1K)","team":"Portugal","slot":"1K","pts":0,"type":"zero"},{"key":"r16:noslot:Irak","label":"Irak (T_M87)","team":"Irak","slot":"T_M87","pts":6,"type":"noslot"},{"key":"r16:noslot:Australia","label":"Australia (2D)","team":"Australia","slot":"2D","pts":6,"type":"noslot"},{"key":"r16:noslot:Bélgica","label":"Bélgica (2G)","team":"Bélgica","slot":"2G","pts":6,"type":"noslot"}],"oct":[{"key":"oct:Bosnia y Herz.","label":"Bosnia y Herz.","team":"Bosnia y Herz.","pts":12},{"key":"oct:Turquía","label":"Turquía","team":"Turquía","pts":12},{"key":"oct:Japón","label":"Japón","team":"Japón","pts":0},{"key":"oct:Marruecos","label":"Marruecos","team":"Marruecos","pts":0},{"key":"oct:Túnez","label":"Túnez","team":"Túnez","pts":0},{"key":"oct:Costa de Marfil","label":"Costa de Marfil","team":"Costa de Marfil","pts":0},{"key":"oct:México","label":"México","team":"México","pts":12},{"key":"oct:Croacia","label":"Croacia","team":"Croacia","pts":0},{"key":"oct:Canadá","label":"Canadá","team":"Canadá","pts":0},{"key":"oct:Austria","label":"Austria","team":"Austria","pts":0},{"key":"oct:Panamá","label":"Panamá","team":"Panamá","pts":12},{"key":"oct:Uruguay","label":"Uruguay","team":"Uruguay","pts":12},{"key":"oct:Irán","label":"Irán","team":"Irán","pts":0},{"key":"oct:Cabo Verde","label":"Cabo Verde","team":"Cabo Verde","pts":0},{"key":"oct:Irak","label":"Irak","team":"Irak","pts":0},{"key":"oct:Australia","label":"Australia","team":"Australia","pts":12}],"qf":[{"key":"qf:Turquía","label":"Turquía","team":"Turquía","pts":0},{"key":"qf:Bosnia y Herz.","label":"Bosnia y Herz.","team":"Bosnia y Herz.","pts":18},{"key":"qf:Marruecos","label":"Marruecos","team":"Marruecos","pts":0},{"key":"qf:México","label":"México","team":"México","pts":18},{"key":"qf:Panamá","label":"Panamá","team":"Panamá","pts":0},{"key":"qf:Canadá","label":"Canadá","team":"Canadá","pts":0},{"key":"qf:Australia","label":"Australia","team":"Australia","pts":0},{"key":"qf:Irak","label":"Irak","team":"Irak","pts":0}],"sf":[{"key":"sf:Turquía","label":"Turquía","team":"Turquía","pts":0},{"key":"sf:Canadá","label":"Canadá","team":"Canadá","pts":0},{"key":"sf:Marruecos","label":"Marruecos","team":"Marruecos","pts":0},{"key":"sf:Australia","label":"Australia","team":"Australia","pts":0}],"final":[{"key":"final:Turquía","label":"Turquía","team":"Turquía","pts":0},{"key":"final:Marruecos","label":"Marruecos","team":"Marruecos","pts":0}],"tercero":[{"key":"tercero:Australia","label":"3er Puesto","pts":0}],"campeon":[{"key":"campeon:Turquía","label":"Campeón","pts":0}],"awards":[{"key":"awards:bota","label":"Bota de Oro","pts":0},{"key":"awards:mvp","label":"MVP del Torneo","pts":0}]}},"matchPts":{"A1":0,"A2":4,"A3":4,"A4":0,"A5":4,"A6":4,"B1":4,"B2":0,"B3":4,"B4":4,"B5":4,"B6":4,"C1":0,"C2":0,"C3":4,"C4":4,"C5":4,"C6":0,"D1":4,"D2":4,"D3":4,"D4":0,"D5":0,"D6":0,"E1":4,"E2":0,"E3":4,"E4":0,"E5":0,"E6":0,"F1":4,"F2":4,"F3":0,"F4":4,"F5":4,"F6":4,"G1":0,"G2":0,"G3":0,"G4":0,"G5":0,"G6":4,"H1":0,"H2":4,"H3":0,"H4":4,"H5":4,"H6":4,"I1":0,"I2":4,"I3":4,"I4":0,"I5":4,"I6":0,"J1":0,"J2":0,"J3":0,"J4":4,"J5":4,"J6":0,"K1":0,"K2":4,"K3":0,"K4":0,"K5":0,"K6":0,"L1":4,"L2":0,"L3":0,"L4":4,"L5":4,"L6":0},"matchKoPts":{"M73":12,"M74":15,"M75":15,"M76":6,"M77":15,"M78":18,"M79":12,"M80":12,"M81":6,"M82":12,"M83":6,"M84":9,"M85":6,"M86":9,"M87":6,"M88":12,"M89":12,"M90":12,"M91":0,"M92":12,"M93":12,"M94":0,"M95":12,"M96":0,"M97":0,"M98":0,"M99":0,"M100":0,"M101":0,"M102":0,"CONS":0,"FINAL":0}},{"rank":2,"name":"gfhgfh","score":{"grupos":105,"r16":132,"oct":48,"qf":36,"sf":24,"final":0,"tercero":0,"campeon":0,"awards":0,"total":345,"det":{"groups":[{"key":"groups:A1","label":"México - Sudáfrica","real":"1–0","pts":7,"type":"exact"},{"key":"groups:A2","label":"Corea del Sur - Rep. Checa","real":"1–0","pts":7,"type":"exact"},{"key":"groups:A3","label":"Rep. Checa - Sudáfrica","real":"1–0","pts":0,"type":"zero"},{"key":"groups:A4","label":"México - Corea del Sur","real":"0–1","pts":0,"type":"zero"},{"key":"groups:A5","label":"Rep. Checa - México","real":"2–5","pts":4,"type":"result"},{"key":"groups:A6","label":"Sudáfrica - Corea del Sur","real":"1–5","pts":0,"type":"zero"},{"key":"groups:B1","label":"Canadá - Bosnia y Herz.","real":"1–521","pts":0,"type":"zero"},{"key":"groups:B2","label":"Qatar - Suiza","real":"1–5","pts":0,"type":"zero"},{"key":"groups:B3","label":"Suiza - Bosnia y Herz.","real":"1–5","pts":4,"type":"result"},{"key":"groups:B4","label":"Canadá - Qatar","real":"1–5","pts":0,"type":"zero"},{"key":"groups:B5","label":"Suiza - Canadá","real":"1–4","pts":0,"type":"zero"},{"key":"groups:B6","label":"Bosnia y Herz. - Qatar","real":"2–3","pts":0,"type":"zero"},{"key":"groups:C1","label":"Brasil - Marruecos","real":"1–0","pts":0,"type":"zero"},{"key":"groups:C2","label":"Haití - Escocia","real":"2–3","pts":4,"type":"result"},{"key":"groups:C3","label":"Escocia - Marruecos","real":"1–4","pts":0,"type":"zero"},{"key":"groups:C4","label":"Brasil - Haití","real":"1–5","pts":4,"type":"result"},{"key":"groups:C5","label":"Escocia - Brasil","real":"7–5","pts":0,"type":"zero"},{"key":"groups:C6","label":"Marruecos - Haití","real":"1–7","pts":0,"type":"zero"},{"key":"groups:D1","label":"Estados Unidos - Paraguay","real":"8–41","pts":4,"type":"result"},{"key":"groups:D2","label":"Australia - Turquía","real":"4–5","pts":0,"type":"zero"},{"key":"groups:D3","label":"Estados Unidos - Australia","real":"1–4","pts":0,"type":"zero"},{"key":"groups:D4","label":"Turquía - Paraguay","real":"5–5","pts":0,"type":"zero"},{"key":"groups:D5","label":"Turquía - Estados Unidos","real":"4–4","pts":0,"type":"zero"},{"key":"groups:D6","label":"Paraguay - Australia","real":"5–88","pts":0,"type":"zero"},{"key":"groups:E1","label":"Alemania - Curazao","real":"1–5","pts":0,"type":"zero"},{"key":"groups:E2","label":"Costa de Marfil - Ecuador","real":"1–5","pts":4,"type":"result"},{"key":"groups:E3","label":"Alemania - Costa de Marfil","real":"1–5","pts":0,"type":"zero"},{"key":"groups:E4","label":"Ecuador - Curazao","real":"1–5","pts":4,"type":"result"},{"key":"groups:E5","label":"Ecuador - Alemania","real":"1–3","pts":4,"type":"result"},{"key":"groups:E6","label":"Curazao - Costa de Marfil","real":"7–8","pts":0,"type":"zero"},{"key":"groups:F1","label":"Países Bajos - Japón","real":"1–12","pts":0,"type":"zero"},{"key":"groups:F2","label":"Suecia - Túnez","real":"1–8","pts":0,"type":"zero"},{"key":"groups:F3","label":"Países Bajos - Suecia","real":"2–23","pts":0,"type":"zero"},{"key":"groups:F4","label":"Túnez - Japón","real":"2–3","pts":0,"type":"zero"},{"key":"groups:F5","label":"Túnez - Países Bajos","real":"1–8","pts":0,"type":"zero"},{"key":"groups:F6","label":"Japón - Suecia","real":"89–9","pts":0,"type":"zero"},{"key":"groups:G1","label":"Bélgica - Egipto","real":"1–2","pts":7,"type":"exact"},{"key":"groups:G2","label":"Irán - Nueva Zelanda","real":"1–2","pts":0,"type":"zero"},{"key":"groups:G3","label":"Bélgica - Irán","real":"2–5","pts":4,"type":"result"},{"key":"groups:G4","label":"Nueva Zelanda - Egipto","real":"41–5","pts":0,"type":"zero"},{"key":"groups:G5","label":"Nueva Zelanda - Bélgica","real":"8–9","pts":0,"type":"zero"},{"key":"groups:G6","label":"Egipto - Irán","real":"65–8","pts":4,"type":"result"},{"key":"groups:H1","label":"España - Cabo Verde","real":"8–5","pts":0,"type":"zero"},{"key":"groups:H2","label":"Arabia Saudita - Uruguay","real":"4–5","pts":0,"type":"zero"},{"key":"groups:H3","label":"España - Arabia Saudita","real":"4–88","pts":4,"type":"result"},{"key":"groups:H4","label":"Uruguay - Cabo Verde","real":"47–8","pts":4,"type":"result"},{"key":"groups:H5","label":"Uruguay - España","real":"4–1","pts":0,"type":"zero"},{"key":"groups:H6","label":"Cabo Verde - Arabia Saudita","real":"1–2","pts":4,"type":"result"},{"key":"groups:I1","label":"Francia - Senegal","real":"1–2","pts":4,"type":"result"},{"key":"groups:I2","label":"Irak - Noruega","real":"1–2","pts":0,"type":"zero"},{"key":"groups:I3","label":"Francia - Irak","real":"1–2","pts":0,"type":"zero"},{"key":"groups:I4","label":"Noruega - Senegal","real":"18–5","pts":0,"type":"zero"},{"key":"groups:I5","label":"Noruega - Francia","real":"8–2","pts":0,"type":"zero"},{"key":"groups:I6","label":"Senegal - Irak","real":"5–2","pts":0,"type":"zero"},{"key":"groups:J1","label":"Argentina - Argelia","real":"1–1","pts":0,"type":"zero"},{"key":"groups:J2","label":"Austria - Jordania","real":"1–22","pts":4,"type":"result"},{"key":"groups:J3","label":"Argentina - Austria","real":"1–55","pts":4,"type":"result"},{"key":"groups:J4","label":"Jordania - Argelia","real":"18–1","pts":0,"type":"zero"},{"key":"groups:J5","label":"Jordania - Argentina","real":"12–1","pts":0,"type":"zero"},{"key":"groups:J6","label":"Argelia - Austria","real":"2–15","pts":0,"type":"zero"},{"key":"groups:K1","label":"Portugal - RD Congo","real":"1–21","pts":4,"type":"result"},{"key":"groups:K2","label":"Uzbekistán - Colombia","real":"5–1","pts":0,"type":"zero"},{"key":"groups:K3","label":"Portugal - Uzbekistán","real":"8–56","pts":0,"type":"zero"},{"key":"groups:K4","label":"Colombia - RD Congo","real":"1–51","pts":0,"type":"zero"},{"key":"groups:K5","label":"Colombia - Portugal","real":"5–6","pts":4,"type":"result"},{"key":"groups:K6","label":"RD Congo - Uzbekistán","real":"58–8","pts":0,"type":"zero"},{"key":"groups:L1","label":"Inglaterra - Croacia","real":"1–2","pts":4,"type":"result"},{"key":"groups:L2","label":"Ghana - Panamá","real":"1–2","pts":0,"type":"zero"},{"key":"groups:L3","label":"Inglaterra - Ghana","real":"58–85","pts":0,"type":"zero"},{"key":"groups:L4","label":"Panamá - Croacia","real":"2–3","pts":4,"type":"result"},{"key":"groups:L5","label":"Panamá - Inglaterra","real":"61–6","pts":4,"type":"result"},{"key":"groups:L6","label":"Croacia - Ghana","real":"5–6","pts":0,"type":"zero"}],"r16":[{"key":"r16:noslot:Sudáfrica","label":"Sudáfrica (2A)","team":"Sudáfrica","slot":"2A","pts":0,"type":"zero"},{"key":"r16:noslot:Canadá","label":"Canadá (2B)","team":"Canadá","slot":"2B","pts":0,"type":"zero"},{"key":"r16:noslot:Alemania","label":"Alemania (1E)","team":"Alemania","slot":"1E","pts":0,"type":"zero"},{"key":"r16:noslot:Haití","label":"Haití (T_M74)","team":"Haití","slot":"T_M74","pts":6,"type":"noslot"},{"key":"r16:noslot:Suecia","label":"Suecia (1F)","team":"Suecia","slot":"1F","pts":0,"type":"zero"},{"key":"r16:noslot:Marruecos","label":"Marruecos (2C)","team":"Marruecos","slot":"2C","pts":6,"type":"noslot"},{"key":"r16:noslot:Escocia","label":"Escocia (1C)","team":"Escocia","slot":"1C","pts":6,"type":"noslot"},{"key":"r16:noslot:Japón","label":"Japón (2F)","team":"Japón","slot":"2F","pts":6,"type":"noslot"},{"key":"r16:noslot:Irak","label":"Irak (1I)","team":"Irak","slot":"1I","pts":6,"type":"noslot"},{"key":"r16:noslot:Países Bajos","label":"Países Bajos (T_M77)","team":"Países Bajos","slot":"T_M77","pts":0,"type":"zero"},{"key":"r16:noslot:Curazao","label":"Curazao (2E)","team":"Curazao","slot":"2E","pts":6,"type":"noslot"},{"key":"r16:slot:2I:Senegal","label":"Senegal (2I)","team":"Senegal","slot":"2I","pts":9,"type":"slot"},{"key":"r16:noslot:México","label":"México (1A)","team":"México","slot":"1A","pts":6,"type":"noslot"},{"key":"r16:slot:T_M79:Ecuador","label":"Ecuador (T_M79)","team":"Ecuador","slot":"T_M79","pts":9,"type":"slot"},{"key":"r16:noslot:Croacia","label":"Croacia (1L)","team":"Croacia","slot":"1L","pts":6,"type":"noslot"},{"key":"r16:noslot:RD Congo","label":"RD Congo (T_M80)","team":"RD Congo","slot":"T_M80","pts":6,"type":"noslot"},{"key":"r16:noslot:Paraguay","label":"Paraguay (1D)","team":"Paraguay","slot":"1D","pts":6,"type":"noslot"},{"key":"r16:noslot:Francia","label":"Francia (T_M81)","team":"Francia","slot":"T_M81","pts":0,"type":"zero"},{"key":"r16:noslot:Egipto","label":"Egipto (1G)","team":"Egipto","slot":"1G","pts":6,"type":"noslot"},{"key":"r16:noslot:Jordania","label":"Jordania (T_M82)","team":"Jordania","slot":"T_M82","pts":6,"type":"noslot"},{"key":"r16:noslot:Colombia","label":"Colombia (2K)","team":"Colombia","slot":"2K","pts":0,"type":"zero"},{"key":"r16:noslot:Panamá","label":"Panamá (2L)","team":"Panamá","slot":"2L","pts":6,"type":"noslot"},{"key":"r16:noslot:Arabia Saudita","label":"Arabia Saudita (1H)","team":"Arabia Saudita","slot":"1H","pts":6,"type":"noslot"},{"key":"r16:noslot:Argentina","label":"Argentina (2J)","team":"Argentina","slot":"2J","pts":0,"type":"zero"},{"key":"r16:slot:1B:Bosnia y Herz.","label":"Bosnia y Herz. (1B)","team":"Bosnia y Herz.","slot":"1B","pts":9,"type":"slot"},{"key":"r16:noslot:Irán","label":"Irán (T_M85)","team":"Irán","slot":"T_M85","pts":0,"type":"zero"},{"key":"r16:noslot:Argelia","label":"Argelia (1J)","team":"Argelia","slot":"1J","pts":0,"type":"zero"},{"key":"r16:noslot:Uruguay","label":"Uruguay (2H)","team":"Uruguay","slot":"2H","pts":6,"type":"noslot"},{"key":"r16:noslot:Portugal","label":"Portugal (1K)","team":"Portugal","slot":"1K","pts":0,"type":"zero"},{"key":"r16:noslot:Inglaterra","label":"Inglaterra (T_M87)","team":"Inglaterra","slot":"T_M87","pts":0,"type":"zero"},{"key":"r16:slot:2D:Turquía","label":"Turquía (2D)","team":"Turquía","slot":"2D","pts":9,"type":"slot"},{"key":"r16:noslot:Nueva Zelanda","label":"Nueva Zelanda (2G)","team":"Nueva Zelanda","slot":"2G","pts":6,"type":"noslot"}],"oct":[{"key":"oct:Sudáfrica","label":"Sudáfrica","team":"Sudáfrica","pts":0},{"key":"oct:Alemania","label":"Alemania","team":"Alemania","pts":0},{"key":"oct:Suecia","label":"Suecia","team":"Suecia","pts":0},{"key":"oct:Japón","label":"Japón","team":"Japón","pts":0},{"key":"oct:Países Bajos","label":"Países Bajos","team":"Países Bajos","pts":0},{"key":"oct:Senegal","label":"Senegal","team":"Senegal","pts":12},{"key":"oct:México","label":"México","team":"México","pts":12},{"key":"oct:Croacia","label":"Croacia","team":"Croacia","pts":0},{"key":"oct:Paraguay","label":"Paraguay","team":"Paraguay","pts":0},{"key":"oct:Egipto","label":"Egipto","team":"Egipto","pts":0},{"key":"oct:Colombia","label":"Colombia","team":"Colombia","pts":0},{"key":"oct:Arabia Saudita","label":"Arabia Saudita","team":"Arabia Saudita","pts":0},{"key":"oct:Bosnia y Herz.","label":"Bosnia y Herz.","team":"Bosnia y Herz.","pts":12},{"key":"oct:Argelia","label":"Argelia","team":"Argelia","pts":0},{"key":"oct:Portugal","label":"Portugal","team":"Portugal","pts":0},{"key":"oct:Nueva Zelanda","label":"Nueva Zelanda","team":"Nueva Zelanda","pts":12}],"qf":[{"key":"qf:Países Bajos","label":"Países Bajos","team":"Países Bajos","pts":0},{"key":"qf:Sudáfrica","label":"Sudáfrica","team":"Sudáfrica","pts":0},{"key":"qf:Japón","label":"Japón","team":"Japón","pts":0},{"key":"qf:México","label":"México","team":"México","pts":18},{"key":"qf:Colombia","label":"Colombia","team":"Colombia","pts":0},{"key":"qf:Paraguay","label":"Paraguay","team":"Paraguay","pts":0},{"key":"qf:Nueva Zelanda","label":"Nueva Zelanda","team":"Nueva Zelanda","pts":18},{"key":"qf:Portugal","label":"Portugal","team":"Portugal","pts":0}],"sf":[{"key":"sf:Sudáfrica","label":"Sudáfrica","team":"Sudáfrica","pts":0},{"key":"sf:Colombia","label":"Colombia","team":"Colombia","pts":0},{"key":"sf:Japón","label":"Japón","team":"Japón","pts":0},{"key":"sf:Nueva Zelanda","label":"Nueva Zelanda","team":"Nueva Zelanda","pts":24}],"final":[{"key":"final:Sudáfrica","label":"Sudáfrica","team":"Sudáfrica","pts":0},{"key":"final:Nueva Zelanda","label":"Nueva Zelanda","team":"Nueva Zelanda","pts":0}],"tercero":[{"key":"tercero:Japón","label":"3er Puesto","pts":0}],"campeon":[{"key":"campeon:Sudáfrica","label":"Campeón","pts":0}],"awards":[{"key":"awards:bota","label":"Bota de Oro","pts":0},{"key":"awards:mvp","label":"MVP del Torneo","pts":0}]}},"matchPts":{"A1":7,"A2":7,"A3":0,"A4":0,"A5":4,"A6":0,"B1":0,"B2":0,"B3":4,"B4":0,"B5":0,"B6":0,"C1":0,"C2":4,"C3":0,"C4":4,"C5":0,"C6":0,"D1":4,"D2":0,"D3":0,"D4":0,"D5":0,"D6":0,"E1":0,"E2":4,"E3":0,"E4":4,"E5":4,"E6":0,"F1":0,"F2":0,"F3":0,"F4":0,"F5":0,"F6":0,"G1":7,"G2":0,"G3":4,"G4":0,"G5":0,"G6":4,"H1":0,"H2":0,"H3":4,"H4":4,"H5":0,"H6":4,"I1":4,"I2":0,"I3":0,"I4":0,"I5":0,"I6":0,"J1":0,"J2":4,"J3":4,"J4":0,"J5":0,"J6":0,"K1":4,"K2":0,"K3":0,"K4":0,"K5":4,"K6":0,"L1":4,"L2":0,"L3":0,"L4":4,"L5":4,"L6":0},"matchKoPts":{"M73":0,"M74":6,"M75":6,"M76":12,"M77":6,"M78":15,"M79":15,"M80":12,"M81":6,"M82":12,"M83":6,"M84":6,"M85":9,"M86":6,"M87":0,"M88":15,"M89":0,"M90":0,"M91":0,"M92":12,"M93":0,"M94":0,"M95":12,"M96":0,"M97":0,"M98":0,"M99":0,"M100":18,"M101":0,"M102":24,"CONS":0,"FINAL":0}}]};
+loadData();
+</script>
+</body>
+</html>
